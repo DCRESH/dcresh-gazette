@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">Atom Herald</title>
+  <link rel="self" href="https://atom.example/feed"/>
+  <link rel="alternate" href="https://atom.example/"/>
+  <entry>
+    <title type="html">Markets &lt;i&gt;Rally&lt;/i&gt;</title>
+    <link rel="alternate" href="https://atom.example/markets"/>
+    <id>tag:atom.example,2026:1</id>
+    <updated>2026-10-02T09:00:00Z</updated>
+    <author><name>Sam Ledger</name></author>
+    <summary>Stocks rose.</summary>
+    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>Stocks rose sharply on <b>Friday</b> as investors cheered.</p></div></content>
+  </entry>
+  <entry>
+    <title>Plain Entry</title>
+    <link href="https://atom.example/plain"/>
+    <id>tag:atom.example,2026:2</id>
+    <published>2026-10-01T09:00:00+02:00</published>
+    <content type="text">Line one &amp; more.
+
+Second paragraph.</content>
+  </entry>
+</feed>

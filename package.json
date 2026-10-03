@@ -1,0 +1,13 @@
+{
+  "name": "kindle-gazette",
+  "version": "1.0.0",
+  "description": "Configurable RSS feeds rendered as a classic newspaper, built for the Kindle web browser.",
+  "main": "server.js",
+  "private": true,
+  "license": "MIT",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/*.test.js"
+  }
+}

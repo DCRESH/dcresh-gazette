@@ -1,0 +1,17 @@
+{
+  "title": "The Kindle Gazette",
+  "motto": "All the News That Fits on E-Ink",
+  "columns": 2,
+  "storiesPerPage": 10,
+  "summaryLength": 280,
+  "refreshMinutes": 20,
+  "maxPerFeed": 30,
+  "showImages": false,
+  "feeds": [
+    { "id": "world", "name": "World", "url": "https://feeds.bbci.co.uk/news/world/rss.xml", "enabled": true },
+    { "id": "national", "name": "National", "url": "https://feeds.npr.org/1001/rss.xml", "enabled": true },
+    { "id": "technology", "name": "Technology", "url": "https://feeds.arstechnica.com/arstechnica/index", "enabled": true },
+    { "id": "science", "name": "Science", "url": "https://www.sciencedaily.com/rss/top/science.xml", "enabled": true },
+    { "id": "hacker-news", "name": "Hacker News", "url": "https://hnrss.org/frontpage", "enabled": true }
+  ]
+}

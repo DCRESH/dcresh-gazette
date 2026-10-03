@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+<channel>
+  <title>The Daily Fixture</title>
+  <link>https://example.com/</link>
+  <item>
+    <title>Council Approves New Bridge &amp; Tunnel</title>
+    <link>https://example.com/bridge</link>
+    <dc:creator>Jane Reporter</dc:creator>
+    <pubDate>Fri, 02 Oct 2026 14:00:00 GMT</pubDate>
+    <description>&lt;p&gt;Short summary of the &lt;b&gt;bridge&lt;/b&gt; story.&lt;/p&gt;</description>
+    <content:encoded><![CDATA[<p>The city council voted <em>7-2</em> on Thursday.</p><script>alert(1)</script><p onclick="x()">Construction begins <a href="/schedule" onclick="evil()">next spring</a>.</p><img src="https://example.com/pixel.gif" width="1" height="1"><iframe src="https://ads.example"></iframe><p>Third paragraph with plenty of words to make this longer than the summary.</p>]]></content:encoded>
+    <media:thumbnail url="https://example.com/bridge.jpg"/>
+    <guid>bridge-1</guid>
+  </item>
+  <item>
+    <title>Weather: Fog Expected</title>
+    <link>https://example.com/fog</link>
+    <pubDate>Fri, 02 Oct 2026 16:30:00 EST</pubDate>
+    <description>Thick fog will roll in overnight.</description>
+  </item>
+  <item>
+    <description>An untitled item with only a description & an ampersand.</description>
+    <guid isPermaLink="true">https://example.com/untitled</guid>
+  </item>
+</channel>
+</rss>
