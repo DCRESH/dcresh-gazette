@@ -23,6 +23,28 @@ To read it on a Kindle, open **Experimental Browser** and go to `http://<compute
 | `ADMIN_PASSWORD` | *(none)* | HTTP Basic password for `/settings` and `/opml` |
 | `TZ` | system | Time zone used for datelines (for example `America/New_York`) |
 
+## Hosting free on GitHub Pages
+
+You don't need a server. A GitHub Actions job (`.github/workflows/pages.yml`) builds the whole paper as static HTML every 30 minutes and publishes it to GitHub Pages. It also rebuilds on every push to `main`. The address will be `https://<user>.github.io/<repo>/`.
+
+To turn it on:
+
+1. Free GitHub Pages requires a **public** repository.
+2. In the repo, go to **Settings → Pages** and set **Source** to **GitHub Actions**.
+3. Go to **Actions → Publish newspaper → Run workflow**, or push any commit, to print the first edition.
+4. Optional: to show datelines in your time zone, go to **Settings → Secrets and variables → Actions → Variables** and add `TZ`, for example `America/New_York`. The default is UTC.
+
+Some things work differently in the static edition:
+
+* **Changing feeds:** there's no Settings page. Edit `config.json` on GitHub; the footer has an *Edit feeds* link to it. Saving the file publishes a new edition within a couple of minutes.
+* **Bylines** show the time each story was published, not "3 hrs ago", because a static page can't keep relative times current.
+* **No text-size buttons or Refresh link.** Use the Kindle browser's own zoom.
+* **Pictures**, if enabled, load directly from the news sites.
+* **Failed builds:** if every feed fails in a run, nothing is published and the previous edition stays up.
+* **Paused schedules:** GitHub pauses scheduled jobs on a repo with no activity for 60 days. If that happens, open the Actions tab and click *Enable workflow*.
+
+To build the static site locally, run `npm run build`. The output goes to `_site/`, and `BASE_PATH=/<repo>` sets the URL prefix.
+
 ## Configuration
 
 Everything in `config.json` can also be changed from **Settings**:

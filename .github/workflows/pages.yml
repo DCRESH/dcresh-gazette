@@ -1,0 +1,45 @@
+name: Publish newspaper
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/30 * * * *'   # new edition every 30 minutes (GitHub may run it a few minutes late)
+  workflow_dispatch:         # "Run workflow" button for an immediate edition
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm test
+      - run: node build.js
+        env:
+          REBUILD_MINUTES: 30
+          # Set a repository variable named TZ (e.g. America/New_York) for local datelines.
+          TZ: ${{ vars.TZ || 'UTC' }}
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
