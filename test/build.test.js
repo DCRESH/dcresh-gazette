@@ -98,7 +98,7 @@ test('comic feeds: latest strip only, laid out as a funny pages in config order'
     showImages: false, // comics show their strips regardless
     feeds: [
       { id: 'local', name: 'Local', url: `${base}/rss.xml` },
-      { id: 'owls', name: 'Funny Pages', url: `${base}/comic2.xml`, type: 'comic', label: 'Night Owls', frontPage: false },
+      { id: 'owls', name: 'Funny Pages', url: `${base}/comic2.xml`, type: 'comic', label: 'Night Owls', frontPage: false, showText: true },
       { id: 'doodle', name: 'Funny Pages', url: `${base}/comic.xml`, type: 'comic', frontPage: false },
     ],
   });
@@ -114,7 +114,10 @@ test('comic feeds: latest strip only, laid out as a funny pages in config order'
   assert.ok(funnies.indexOf('Night Owls') < funnies.indexOf('Daily Doodle'));
   assert.doesNotMatch(funnies, /ComicCaster/);
   assert.match(funnies, /by Lee Ink/);
-  assert.match(funnies, /class="comic" src="https:\/\/comics\.example\/strips\/owls-1003\.png"/);
+  assert.match(funnies, /class="comic" style="max-height:440px;max-height:55vh" src="https:\/\/comics\.example\/strips\/owls-1003\.png"/);
+  // showText prints the feed's text under the strip; without it there's no caption.
+  assert.match(funnies, /<div class="strip-text"><p>Owls discuss the moon\.<\/p><\/div>/);
+  assert.doesNotMatch(funnies, /Doodle discusses/);
   // Not on the front page, and no news-style summaries.
   assert.doesNotMatch(fs.readFileSync(path.join(out, 'index.html'), 'utf8'), /comics\.example/);
   assert.doesNotMatch(funnies, /Continued/);
