@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+  <title>Daily Doodle - ComicCaster</title>
+  <link>https://comics.example/doodle</link>
+  <item>
+    <title>Daily Doodle for October 02, 2026</title>
+    <link>https://comics.example/doodle/2026/10/02</link>
+    <dc:creator>Pat Penn</dc:creator>
+    <pubDate>Fri, 02 Oct 2026 05:00:00 GMT</pubDate>
+    <description><![CDATA[<img src="https://comics.example/strips/doodle-1002.png" alt="Daily Doodle">]]></description>
+  </item>
+  <item>
+    <title>Daily Doodle for October 03, 2026</title>
+    <link>https://comics.example/doodle/2026/10/03</link>
+    <dc:creator>Pat Penn</dc:creator>
+    <pubDate>Sat, 03 Oct 2026 05:00:00 GMT</pubDate>
+    <description><![CDATA[<p><img src="https://comics.example/strips/doodle-1003.png" alt="Daily Doodle"></p>]]></description>
+  </item>
+  <item>
+    <title>Daily Doodle for October 01, 2026</title>
+    <link>https://comics.example/doodle/2026/10/01</link>
+    <pubDate>Thu, 01 Oct 2026 05:00:00 GMT</pubDate>
+    <description><![CDATA[<img src="https://comics.example/strips/doodle-1001.png">]]></description>
+  </item>
+</channel>
+</rss>

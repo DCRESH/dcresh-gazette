@@ -83,3 +83,39 @@ test('static build refuses to publish a config.json with a JSON typo', async () 
   fs.writeFileSync(process.env.CONFIG_PATH, '{ "feeds": [ { "url": "http://a" } { "url": "http://b" } ] }');
   await assert.rejects(build(), (e) => /not valid JSON/.test(e.message) && e.line === 1);
 });
+
+test('comic feeds: latest strip only, laid out as a funny pages in config order', async (t) => {
+  const feedServer = http.createServer((req, res) => {
+    const file = path.join(__dirname, 'fixtures', path.basename(req.url));
+    if (!fs.existsSync(file)) { res.writeHead(404); return res.end(); }
+    res.writeHead(200, { 'Content-Type': 'application/xml' });
+    res.end(fs.readFileSync(file));
+  });
+  await new Promise((r) => feedServer.listen(0, '127.0.0.1', r));
+  t.after(() => feedServer.close());
+  const base = `http://127.0.0.1:${feedServer.address().port}`;
+  config.save({
+    showImages: false, // comics show their strips regardless
+    feeds: [
+      { id: 'local', name: 'Local', url: `${base}/rss.xml` },
+      { id: 'owls', name: 'Funny Pages', url: `${base}/comic2.xml`, type: 'comic', label: 'Night Owls', frontPage: false },
+      { id: 'doodle', name: 'Funny Pages', url: `${base}/comic.xml`, type: 'comic', frontPage: false },
+    ],
+  });
+  require('../lib/feeds').clearCache();
+  await build();
+  const out = process.env.OUT_DIR;
+  const funnies = fs.readFileSync(path.join(out, 'section/funny-pages/index.html'), 'utf8');
+  // Only the newest strip of each comic.
+  assert.match(funnies, /owls-1003\.png/);
+  assert.match(funnies, /doodle-1003\.png/);
+  assert.doesNotMatch(funnies, /-100[12]\.png/);
+  // Config order (Night Owls first), labels from config or the cleaned feed title.
+  assert.ok(funnies.indexOf('Night Owls') < funnies.indexOf('Daily Doodle'));
+  assert.doesNotMatch(funnies, /ComicCaster/);
+  assert.match(funnies, /by Lee Ink/);
+  assert.match(funnies, /class="comic" src="https:\/\/comics\.example\/strips\/owls-1003\.png"/);
+  // Not on the front page, and no news-style summaries.
+  assert.doesNotMatch(fs.readFileSync(path.join(out, 'index.html'), 'utf8'), /comics\.example/);
+  assert.doesNotMatch(funnies, /Continued/);
+});

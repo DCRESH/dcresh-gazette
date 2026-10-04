@@ -62,14 +62,19 @@ async function build() {
 
   const cfg = config.load({ strict: true });
   const sections = await feeds.getEdition(cfg);
+  const now = Date.now();
   const summary = ['| Feed | Result |', '| --- | --- |'];
   for (const section of sections) {
     for (const s of section.sources) {
-      const label = section.sources.length > 1 ? `${section.name} (${s.feed.url})` : section.name;
-      const result = s.error || `${s.count} stories`;
+      const label = s.feed.label || (section.sources.length > 1 ? `${section.name} (${s.feed.url})` : section.name);
+      const strip = s.latest;
+      const result = s.error || (s.feed.type === 'comic'
+        ? (strip ? `strip for ${new Date(strip.date || now).toLocaleDateString('en-US', { timeZone: process.env.TZ || 'UTC', month: 'short', day: 'numeric' })}${strip.image ? ` (${strip.image})` : ' \u2014 NO IMAGE FOUND'}` : 'no strips in feed')
+        : `${s.count} stories`);
       console.log(`${s.error ? 'FAIL' : ' ok '} ${label.padEnd(24)} ${result}`);
       summary.push(`| ${label} | ${s.error ? `\u274c ${s.error}` : `\u2705 ${result}`} |`);
       if (s.error) annotate('warning', `${label}: ${s.error} (${s.feed.url})`, { title: 'Feed failed' });
+      else if (s.feed.type === 'comic' && !(strip && strip.image)) annotate('warning', `${label}: ${result} (${s.feed.url})`, { title: 'Comic has no image' });
       else annotate('notice', `${label}: ${result}`, { title: 'Feed loaded' });
     }
   }
@@ -90,7 +95,6 @@ async function build() {
     files++;
   };
   const pagesFor = (n) => Math.max(1, Math.ceil(n / cfg.storiesPerPage));
-  const now = Date.now();
 
   const frontPages = pagesFor(render.frontPageStories(sections).length);
   for (let p = 1; p <= frontPages; p++) {
@@ -98,7 +102,7 @@ async function build() {
   }
 
   for (const section of sections) {
-    for (let p = 1; p <= pagesFor(section.stories.length); p++) {
+    for (let p = 1; p <= render.sectionPageCount(cfg, section); p++) {
       write(render.site.section(section.id, p), render.sectionPage({ config: cfg, sections, section, page: p, size: SIZE, now }));
     }
     for (const story of section.stories) {
