@@ -1,6 +1,7 @@
 {
   "title": "The Resh Gazette",
   "motto": "What's old is new",
+  "founded": "2026-10-04",
   "columns": 2,
   "storiesPerPage": 10,
   "summaryLength": 280,

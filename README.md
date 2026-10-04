@@ -52,6 +52,7 @@ Everything in `config.json` can also be changed from **Settings**:
 | Key | Default | |
 | --- | --- | --- |
 | `title`, `motto` | The Kindle Gazette | Masthead text |
+| `founded` | *(none)* | Founding date, `YYYY-MM-DD`. The masthead shows Vol. I, No. 1 on that day. The number goes up daily and each anniversary starts a new volume. Leave it out to hide the line. |
 | `columns` | 2 | Front-page columns, 1–4. Use 2 for a 6–7″ Kindle in portrait and 3 for a Scribe or landscape. |
 | `storiesPerPage` | 10 | Stories per newspaper page |
 | `summaryLength` | 280 | Summary characters per brief (the lead gets twice as many) |

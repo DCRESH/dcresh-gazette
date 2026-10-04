@@ -140,7 +140,7 @@ async function handleSettingsPost(req, res) {
       }
     }
   } else if (action === 'general') {
-    for (const k of ['title', 'motto', 'columns', 'storiesPerPage', 'summaryLength', 'refreshMinutes', 'maxPerFeed']) {
+    for (const k of ['title', 'motto', 'founded', 'columns', 'storiesPerPage', 'summaryLength', 'refreshMinutes', 'maxPerFeed']) {
       if (form.has(k)) c[k] = form.get(k);
     }
     c.showImages = form.has('showImages');

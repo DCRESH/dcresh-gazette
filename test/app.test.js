@@ -162,3 +162,19 @@ test('end to end: front page, section, article, settings', async (t) => {
   res = await get('/img?u=' + encodeURIComponent('https://not-in-feeds.example/x.jpg'));
   assert.equal(res.status, 404, 'image proxy is not an open proxy');
 });
+
+test('volume and issue count from the founding date', () => {
+  const { editionNumber } = require('../lib/render');
+  const at = (iso) => Date.parse(iso);
+  const ny = 'America/New_York';
+  assert.deepEqual(editionNumber('2026-10-04', at('2026-10-04T12:00:00Z'), ny), { volume: 1, issue: 1 });
+  assert.deepEqual(editionNumber('2026-10-04', at('2026-10-05T12:00:00Z'), ny), { volume: 1, issue: 2 });
+  assert.deepEqual(editionNumber('2026-10-04', at('2027-10-03T12:00:00Z'), ny), { volume: 1, issue: 365 });
+  assert.deepEqual(editionNumber('2026-10-04', at('2027-10-04T12:00:00Z'), ny), { volume: 2, issue: 1 });
+  assert.deepEqual(editionNumber('2026-10-04', at('2028-10-05T12:00:00Z'), ny), { volume: 3, issue: 2 });
+  // The day turns over at midnight in the paper's time zone, not UTC.
+  assert.deepEqual(editionNumber('2026-10-04', at('2026-10-05T02:00:00Z'), ny), { volume: 1, issue: 1 });
+  assert.deepEqual(editionNumber('2026-10-04', at('2026-10-05T02:00:00Z'), 'UTC'), { volume: 1, issue: 2 });
+  assert.equal(editionNumber(null), null);
+  assert.equal(editionNumber('not a date'), null);
+});
