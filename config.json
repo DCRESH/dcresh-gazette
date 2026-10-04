@@ -9,6 +9,7 @@
   "maxPerFeed": 30,
   "showImages": true,
   "feeds": [
-    { "id": "gospel-coalition", "name": "Gospel Coalition", "url": "https://www.thegospelcoalition.org/feed", "enabled": true }
+    { "id": "gospel-coalition", "name": "Gospel Coalition", "url": "https://www.thegospelcoalition.org/feed", "enabled": true },
+    { "id": "weather", "name": "Orlando Weather", "url": "https://www.wesh.com/wxapparticles-rss", "enabled": true }
   ]
 }
