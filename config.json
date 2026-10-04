@@ -10,6 +10,6 @@
   "showImages": true,
   "feeds": [
     { "id": "gospel-coalition", "name": "Gospel Coalition", "url": "https://www.thegospelcoalition.org/feed", "enabled": true },
-    { "id": "weather", "name": "Orlando Weather", "url": "https://www.wesh.com/weather", "enabled": true }
+    { "id": "weather", "name": "Orlando Weather", "url": "http://mynews13.com/services/contentfeed.fl%7Corlando%7Cweather%7Cweather-experts-blog.landing.rss", "enabled": true }
   ]
 }
