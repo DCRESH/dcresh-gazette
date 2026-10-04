@@ -10,6 +10,6 @@
   "showImages": true,
   "feeds": [
     { "id": "gospel-coalition", "name": "Gospel Coalition", "url": "https://www.thegospelcoalition.org/feed", "enabled": true },
-    {"id": "pearls-before-swine", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/pearlsbeforeswine", "enabled": true}
+    {"id": "pearls-before-swine", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/pearlsbeforeswine", "enabled": true, "frontPage": false}
   ]
 }
