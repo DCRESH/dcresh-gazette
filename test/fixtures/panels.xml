@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<rss version="2.0"><channel><title>Panels</title><link>https://panels.example/</link>
+<item><title>Panels - 2026-10-03 #1</title><link>https://panels.example/1</link><pubDate>Sat, 03 Oct 2026 00:00:00 GMT</pubDate><description><![CDATA[<img src="https://panels.example/p1.png">]]></description></item>
+<item><title>Panels - 2026-10-03 #2</title><link>https://panels.example/2</link><pubDate>Sat, 03 Oct 2026 00:00:00 GMT</pubDate><description><![CDATA[<img src="https://panels.example/p2.png">]]></description></item>
+<item><title>Panels - 2026-10-02 #3</title><link>https://panels.example/0</link><pubDate>Fri, 02 Oct 2026 00:00:00 GMT</pubDate><description><![CDATA[<img src="https://panels.example/p0.png">]]></description></item>
+</channel></rss>

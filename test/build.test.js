@@ -100,6 +100,8 @@ test('comic feeds: latest strip only, laid out as a funny pages in config order'
       { id: 'local', name: 'Local', url: `${base}/rss.xml` },
       { id: 'owls', name: 'Funny Pages', url: `${base}/comic2.xml`, type: 'comic', label: 'Night Owls', frontPage: false, showText: true },
       { id: 'doodle', name: 'Funny Pages', url: `${base}/comic.xml`, type: 'comic', frontPage: false },
+      // Two panels on the same day, listed oldest first: the higher-numbered one wins.
+      { id: 'panels', name: 'Funny Pages', url: `${base}/panels.xml`, type: 'comic', frontPage: false },
     ],
   });
   require('../lib/feeds').clearCache();
@@ -110,6 +112,8 @@ test('comic feeds: latest strip only, laid out as a funny pages in config order'
   assert.match(funnies, /owls-1003\.png/);
   assert.match(funnies, /doodle-1003\.png/);
   assert.doesNotMatch(funnies, /-100[12]\.png/);
+  assert.match(funnies, /panels\.example\/p2\.png/);
+  assert.doesNotMatch(funnies, /panels\.example\/p[01]\.png/);
   // Config order (Night Owls first), labels from config or the cleaned feed title.
   assert.ok(funnies.indexOf('Night Owls') < funnies.indexOf('Daily Doodle'));
   assert.doesNotMatch(funnies, /ComicCaster/);
