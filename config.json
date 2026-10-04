@@ -6,7 +6,7 @@
   "summaryLength": 280,
   "refreshMinutes": 20,
   "maxPerFeed": 30,
-  "showImages": false,
+  "showImages": true,
   "feeds": [
     { "id": "world", "name": "World", "url": "https://feeds.bbci.co.uk/news/world/rss.xml", "enabled": true },
     { "id": "national", "name": "National", "url": "https://feeds.npr.org/1001/rss.xml", "enabled": true },
