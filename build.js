@@ -10,7 +10,8 @@
 //   BASE_PATH         URL prefix the site is served under. Defaults to
 //                     "/<repo>" from GITHUB_REPOSITORY, or "" for <user>.github.io repos.
 //   EDIT_URL          link shown as "Edit feeds" in the footer
-//   REBUILD_MINUTES   shown in the footer ("New edition every N minutes")
+//   EDITION_HOURS     local hours the scheduled editions are printed, e.g. "6 18".
+//                     Shown in the footer; names the edition Morning/Evening.
 //   TZ                time zone for datelines
 
 const fs = require('fs');
@@ -47,6 +48,19 @@ function writeSummary(markdown) {
   if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
 }
 
+function editionInfo() {
+  const hours = (process.env.EDITION_HOURS || '').match(/\d+/g);
+  if (!hours) return {};
+  const tz = process.env.TZ || 'UTC';
+  const fmt = (h) => `${h % 12 || 12} ${h < 12 ? 'AM' : 'PM'}`;
+  const list = hours.map(Number).sort((a, b) => a - b).map(fmt);
+  const localHour = +new Date().toLocaleString('en-US', { timeZone: tz, hour: 'numeric', hourCycle: 'h23' });
+  return {
+    scheduleNote: `New editions at ${list.length > 1 ? `${list.slice(0, -1).join(', ')} and ${list[list.length - 1]}` : list[0]}`,
+    editionName: localHour < 12 ? 'Morning Edition' : 'Evening Edition',
+  };
+}
+
 async function build() {
   const B = basePath();
   const pageDir = (prefix, p) => (p > 1 ? `${prefix}${p}/` : prefix);
@@ -57,7 +71,7 @@ async function build() {
     article: (id, p) => pageDir(`${B}/article/${id}/`, p),
     image: (url) => url, // no image proxy on a static host
     editFeeds: editUrl(),
-    rebuildMinutes: parseInt(process.env.REBUILD_MINUTES, 10) || null,
+    ...editionInfo(),
     builtAt: Date.now(),
   });
 
@@ -83,7 +97,10 @@ async function build() {
   const total = sections.reduce((n, s) => n + s.stories.length, 0);
   if (total === 0) {
     // Leave the previous deployment in place rather than publishing an empty paper.
-    throw new Error(cfg.feeds.some((f) => f.enabled) ? 'Every feed failed; not publishing.' : 'No feeds are enabled in config.json; not publishing.');
+    const allFailed = sections.every((s) => s.sources.every((x) => x.error));
+    throw new Error(!cfg.feeds.some((f) => f.enabled) ? 'No feeds are enabled in config.json; not publishing.'
+      : allFailed ? 'Every feed failed; not publishing.'
+      : `No stories from the last ${cfg.maxAgeHours} hours; not publishing.`);
   }
 
   fs.rmSync(OUT, { recursive: true, force: true });

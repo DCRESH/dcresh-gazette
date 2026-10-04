@@ -2,10 +2,14 @@ name: Publish newspaper
 
 on:
   push:
-    branches: [main]
+    branches: [main]       # editing config.json publishes a new edition right away
   schedule:
-    - cron: '*/30 * * * *'   # new edition every 30 minutes (GitHub may run it a few minutes late)
-  workflow_dispatch:         # "Run workflow" button for an immediate edition
+    # Two editions a day, at EDITION_HOURS in the paper's time zone. GitHub's
+    # schedule is UTC-only, so wake at both candidate UTC hours (for daylight
+    # saving and standard time); the "when" job lets only the right one publish.
+    # 6 AM / 6 PM New York = 10:00 / 22:00 UTC in summer, 11:00 / 23:00 UTC in winter.
+    - cron: '7 10,11,22,23 * * *'
+  workflow_dispatch:       # "Run workflow" button for an immediate edition
 
 permissions:
   contents: read
@@ -16,8 +20,30 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+env:
+  EDITION_HOURS: '6 18'
+  # The paper's time zone. Set a repository variable named TZ to change it.
+  TZ: ${{ vars.TZ || 'America/New_York' }}
+
 jobs:
+  when:
+    runs-on: ubuntu-latest
+    outputs:
+      publish: ${{ steps.check.outputs.publish }}
+    steps:
+      - id: check
+        name: Is it time for an edition?
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          hour=$(date +%-H)
+          if [ "$EVENT" != schedule ] || [[ " $EDITION_HOURS " == *" $hour "* ]]; then publish=true; else publish=false; fi
+          echo "Local time $(date '+%H:%M %Z') ($TZ), event $EVENT: publish=$publish"
+          echo "publish=$publish" >> "$GITHUB_OUTPUT"
+
   build:
+    needs: when
+    if: needs.when.outputs.publish == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -27,10 +53,7 @@ jobs:
       - run: npm test
       - run: node build.js
         env:
-          REBUILD_MINUTES: 30
           EDIT_URL: ''   # hide the "Edit feeds" link in the footer
-          # Set a repository variable named TZ (e.g. America/New_York) for local datelines.
-          TZ: ${{ vars.TZ || 'UTC' }}
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site

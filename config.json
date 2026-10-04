@@ -7,6 +7,7 @@
   "summaryLength": 280,
   "refreshMinutes": 20,
   "maxPerFeed": 30,
+  "maxAgeHours": 24,
   "showImages": true,
   "comicMaxHeight": 55,
   "feeds": [

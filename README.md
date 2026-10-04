@@ -25,7 +25,7 @@ To read it on a Kindle, open **Experimental Browser** and go to `http://<compute
 
 ## Hosting free on GitHub Pages
 
-You don't need a server. A GitHub Actions job (`.github/workflows/pages.yml`) builds the whole paper as static HTML every 30 minutes and publishes it to GitHub Pages. It also rebuilds on every push to `main`. The address will be `https://<user>.github.io/<repo>/`.
+You don't need a server. A GitHub Actions job (`.github/workflows/pages.yml`) builds the whole paper as static HTML twice a day, a morning and an evening edition at 6 AM and 6 PM in the paper's time zone, and publishes it to GitHub Pages. It also rebuilds right away on every push to `main`. To change the times, edit `EDITION_HOURS` (local hours) in the workflow and the matching UTC hours in its `cron` line. The address will be `https://<user>.github.io/<repo>/`.
 
 To turn it on:
 
@@ -62,6 +62,7 @@ Everything in `config.json` can also be changed from **Settings**:
 | `feeds` | | `[{ "id", "name", "url", "enabled", "frontPage" }]`. Feeds with the same `name` are merged into one section, with their stories mixed by date. Set `"frontPage": false` on a feed to keep its stories off the front page; they still appear in their section. Each `id` must be unique. |
 | feed `type`, `label` | `news` | Set `"type": "comic"` on a comic-strip feed. It then contributes only its latest strip, shown as a full-width image even when `showImages` is off. A section made only of comic feeds is laid out as a funny pages, in the order the feeds are listed. `label` is the strip's name, such as `"Peanuts"`. |
 | feed `showText` | false | Comic feeds only. `true` prints the feed's text for the strip, such as a caption or alt text, under the image. |
+| `maxAgeHours` | *(none)* | Only include stories from the last N hours, for example `24`. A comic's strip counts as noon UTC on its date. Undated stories are kept. |
 | `comicMaxHeight` | 55 | Tallest a comic strip may be, as a % of the screen height. Lower it if Sunday strips are too big. |
 
 When you add a feed you can paste a website's address instead of the feed's. The server finds the feed through the site's `<link rel="alternate">` tag. You can also import feeds by pasting OPML or a list of URLs, and export them from `/opml`.

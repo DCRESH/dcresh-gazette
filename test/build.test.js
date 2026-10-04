@@ -126,3 +126,21 @@ test('comic feeds: latest strip only, laid out as a funny pages in config order'
   assert.doesNotMatch(fs.readFileSync(path.join(out, 'index.html'), 'utf8'), /comics\.example/);
   assert.doesNotMatch(funnies, /Continued/);
 });
+
+test('maxAgeHours keeps only recent stories', async (t) => {
+  const item = (title, hoursAgo) => `<item><title>${title}</title><link>https://fresh.example/${encodeURIComponent(title)}</link><pubDate>${new Date(Date.now() - hoursAgo * 3600e3).toUTCString()}</pubDate><description>${title} text</description></item>`;
+  const feedServer = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'application/xml' });
+    res.end(`<?xml version="1.0"?><rss version="2.0"><channel><title>Fresh</title><link>https://fresh.example/</link>${item('Two Hours Old', 2)}${item('Thirty Hours Old', 30)}<item><title>Undated Item</title><link>https://fresh.example/u</link></item></channel></rss>`);
+  });
+  await new Promise((r) => feedServer.listen(0, '127.0.0.1', r));
+  t.after(() => feedServer.close());
+  const url = `http://127.0.0.1:${feedServer.address().port}/feed`;
+  config.save({ maxAgeHours: 24, feeds: [{ id: 'fresh', name: 'Fresh', url }] });
+  require('../lib/feeds').clearCache();
+  await build();
+  const section = fs.readFileSync(path.join(process.env.OUT_DIR, 'section/fresh/index.html'), 'utf8');
+  assert.match(section, /Two Hours Old/);
+  assert.doesNotMatch(section, /Thirty Hours Old/);
+  assert.match(section, /Undated Item/, 'undated stories are kept');
+});
