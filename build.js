@@ -100,7 +100,7 @@ async function build() {
     const allFailed = sections.every((s) => s.sources.every((x) => x.error));
     throw new Error(!cfg.feeds.some((f) => f.enabled) ? 'No feeds are enabled in config.json; not publishing.'
       : allFailed ? 'Every feed failed; not publishing.'
-      : `No stories from the last ${cfg.maxAgeHours} hours; not publishing.`);
+      : 'No feed has any stories; not publishing.');
   }
 
   fs.rmSync(OUT, { recursive: true, force: true });
@@ -114,7 +114,7 @@ async function build() {
   };
   const pagesFor = (n) => Math.max(1, Math.ceil(n / cfg.storiesPerPage));
 
-  const frontPages = pagesFor(render.frontPageStories(sections).length);
+  const frontPages = pagesFor(render.frontPageStories(sections, cfg, now).length);
   for (let p = 1; p <= frontPages; p++) {
     write(render.site.home(p), render.frontPage({ config: cfg, sections, page: p, size: SIZE, now }));
   }

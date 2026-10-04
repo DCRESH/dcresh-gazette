@@ -62,7 +62,7 @@ Everything in `config.json` can also be changed from **Settings**:
 | `feeds` | | `[{ "id", "name", "url", "enabled", "frontPage" }]`. Feeds with the same `name` are merged into one section, with their stories mixed by date. Set `"frontPage": false` on a feed to keep its stories off the front page; they still appear in their section. Each `id` must be unique. |
 | feed `type`, `label` | `news` | Set `"type": "comic"` on a comic-strip feed. It then contributes only its latest strip, shown as a full-width image even when `showImages` is off. A section made only of comic feeds is laid out as a funny pages, in the order the feeds are listed. `label` is the strip's name, such as `"Peanuts"`. |
 | feed `showText` | false | Comic feeds only. `true` prints the feed's text for the strip, such as a caption or alt text, under the image. |
-| `maxAgeHours` | *(none)* | Only include stories from the last N hours, for example `24`. A comic's strip counts as noon UTC on its date. Undated stories are kept. |
+| `maxAgeHours` | *(none)* | Front page only: show just the stories from the last N hours, for example `24`. Section pages still show everything (up to `maxPerFeed`). Undated stories are kept. |
 | `comicMaxHeight` | 55 | Tallest a comic strip may be, as a % of the screen height. Lower it if Sunday strips are too big. |
 
 When you add a feed you can paste a website's address instead of the feed's. The server finds the feed through the site's `<link rel="alternate">` tag. You can also import feeds by pasting OPML or a list of URLs, and export them from `/opml`.

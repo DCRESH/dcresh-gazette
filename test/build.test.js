@@ -127,11 +127,13 @@ test('comic feeds: latest strip only, laid out as a funny pages in config order'
   assert.doesNotMatch(funnies, /Continued/);
 });
 
-test('maxAgeHours keeps only recent stories', async (t) => {
+test('maxAgeHours limits the front page; section pages show everything', async (t) => {
   const item = (title, hoursAgo) => `<item><title>${title}</title><link>https://fresh.example/${encodeURIComponent(title)}</link><pubDate>${new Date(Date.now() - hoursAgo * 3600e3).toUTCString()}</pubDate><description>${title} text</description></item>`;
   const feedServer = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/xml' });
-    res.end(`<?xml version="1.0"?><rss version="2.0"><channel><title>Fresh</title><link>https://fresh.example/</link>${item('Two Hours Old', 2)}${item('Thirty Hours Old', 30)}<item><title>Undated Item</title><link>https://fresh.example/u</link></item></channel></rss>`);
+    const items = req.url === '/old' ? item('Thirty Hours Old', 30)
+      : `${item('Two Hours Old', 2)}${item('Thirty Hours Old', 30)}<item><title>Undated Item</title><link>https://fresh.example/u</link></item>`;
+    res.end(`<?xml version="1.0"?><rss version="2.0"><channel><title>Fresh</title><link>https://fresh.example/</link>${items}</channel></rss>`);
   });
   await new Promise((r) => feedServer.listen(0, '127.0.0.1', r));
   t.after(() => feedServer.close());
@@ -139,8 +141,18 @@ test('maxAgeHours keeps only recent stories', async (t) => {
   config.save({ maxAgeHours: 24, feeds: [{ id: 'fresh', name: 'Fresh', url }] });
   require('../lib/feeds').clearCache();
   await build();
+  const front = fs.readFileSync(path.join(process.env.OUT_DIR, 'index.html'), 'utf8');
+  assert.match(front, /Two Hours Old/);
+  assert.doesNotMatch(front, /Thirty Hours Old/);
+  assert.match(front, /Undated Item/, 'undated stories are kept');
   const section = fs.readFileSync(path.join(process.env.OUT_DIR, 'section/fresh/index.html'), 'utf8');
   assert.match(section, /Two Hours Old/);
-  assert.doesNotMatch(section, /Thirty Hours Old/);
-  assert.match(section, /Undated Item/, 'undated stories are kept');
+  assert.match(section, /Thirty Hours Old/, 'the section page is not limited');
+
+  // Nothing recent: the front page says so instead of looking broken.
+  config.save({ maxAgeHours: 1, feeds: [{ id: 'fresh', name: 'Fresh', url: url.replace('/feed', '/old') }] });
+  require('../lib/feeds').clearCache();
+  await build();
+  assert.match(fs.readFileSync(path.join(process.env.OUT_DIR, 'index.html'), 'utf8'), /Nothing new in the last 1 hour\./);
+  assert.match(fs.readFileSync(path.join(process.env.OUT_DIR, 'section/fresh/index.html'), 'utf8'), /Thirty Hours Old/);
 });
