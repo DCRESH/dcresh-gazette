@@ -178,3 +178,21 @@ test('volume and issue count from the founding date', () => {
   assert.equal(editionNumber(null), null);
   assert.equal(editionNumber('not a date'), null);
 });
+
+test('comic strips keep their calendar date in any time zone, and big images are scaled down', () => {
+  const { comicDay, screenSizedImage } = require('../lib/feeds');
+  const { editionNumber } = require('../lib/render');
+  const day = (t, timeZone) => new Date(t).toLocaleDateString('en-CA', { timeZone });
+  const fromTitle = comicDay({ title: 'Peanuts - 2026-10-03', date: Date.parse('2026-10-03T00:00:00Z') });
+  assert.equal(day(fromTitle, 'America/New_York'), '2026-10-03');
+  assert.equal(day(fromTitle, 'America/Los_Angeles'), '2026-10-03');
+  assert.equal(day(fromTitle, 'Asia/Tokyo'), '2026-10-03');
+  const midnight = comicDay({ title: 'Untitled', date: Date.parse('2026-10-03T00:00:00Z') });
+  assert.equal(day(midnight, 'America/New_York'), '2026-10-03');
+  const timed = Date.parse('2026-10-03T15:30:00Z');
+  assert.equal(comicDay({ title: 'x', date: timed }), timed, 'real timestamps are left alone');
+  assert.equal(screenSizedImage('https://img.example/a?optimizer=image&width=2800&quality=85'), 'https://img.example/a?optimizer=image&width=1400&quality=85');
+  assert.equal(screenSizedImage('https://img.example/a?width=900'), 'https://img.example/a?width=900');
+  assert.equal(screenSizedImage('https://img.example/a.png'), 'https://img.example/a.png');
+  assert.ok(editionNumber);
+});
