@@ -214,7 +214,7 @@ async function handle(req, res) {
   let m;
   if ((m = /^\/section\/([a-z0-9-]+)$/.exec(path))) {
     const sections = await feeds.getEdition(cfg);
-    const section = sections.find((s) => s.feed.id === m[1]);
+    const section = sections.find((s) => s.id === m[1]);
     if (!section) return send(res, 404, render.notFound({ config: cfg, size, message: 'No such section.' }));
     return send(res, 200, render.sectionPage({ config: cfg, sections, section, page, size }));
   }
@@ -224,7 +224,7 @@ async function handle(req, res) {
     const sections = await feeds.getEdition(cfg); // refreshes the index if stale
     story = feeds.getStory(m[1]) || story;
     if (!story) return send(res, 404, render.notFound({ config: cfg, size }));
-    const section = sections.find((s) => s.feed.id === story.feedId);
+    const section = sections.find((s) => s.id === story.sectionId);
     return send(res, 200, render.articlePage({ config: cfg, story, section, page, size }));
   }
 

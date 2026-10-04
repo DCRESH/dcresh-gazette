@@ -127,7 +127,7 @@ test('end to end: front page, section, article, settings', async (t) => {
   assert.match(html, /Jane Reporter/);
   assert.doesNotMatch(html, /alert\(1\)/);
 
-  res = await get('/section/rdf');
+  res = await get('/section/cafe-society');
   html = await res.text();
   assert.match(html, /Café opens downtown/, 'ISO-8859-1 decoded');
 

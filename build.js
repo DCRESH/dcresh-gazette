@@ -63,12 +63,15 @@ async function build() {
   const cfg = config.load({ strict: true });
   const sections = await feeds.getEdition(cfg);
   const summary = ['| Feed | Result |', '| --- | --- |'];
-  for (const s of sections) {
-    const result = s.error || `${s.stories.length} stories`;
-    console.log(`${s.error ? 'FAIL' : ' ok '} ${s.feed.name.padEnd(24)} ${result}`);
-    summary.push(`| ${s.feed.name} | ${s.error ? `\u274c ${s.error}` : `\u2705 ${result}`} |`);
-    if (s.error) annotate('warning', `${s.feed.name}: ${s.error} (${s.feed.url})`, { title: 'Feed failed' });
-    else annotate('notice', `${s.feed.name}: ${result}`, { title: 'Feed loaded' });
+  for (const section of sections) {
+    for (const s of section.sources) {
+      const label = section.sources.length > 1 ? `${section.name} (${s.feed.url})` : section.name;
+      const result = s.error || `${s.count} stories`;
+      console.log(`${s.error ? 'FAIL' : ' ok '} ${label.padEnd(24)} ${result}`);
+      summary.push(`| ${label} | ${s.error ? `\u274c ${s.error}` : `\u2705 ${result}`} |`);
+      if (s.error) annotate('warning', `${label}: ${s.error} (${s.feed.url})`, { title: 'Feed failed' });
+      else annotate('notice', `${label}: ${result}`, { title: 'Feed loaded' });
+    }
   }
   writeSummary(`### Edition feeds\n\n${summary.join('\n')}\n`);
   const total = sections.reduce((n, s) => n + s.stories.length, 0);
@@ -96,7 +99,7 @@ async function build() {
 
   for (const section of sections) {
     for (let p = 1; p <= pagesFor(section.stories.length); p++) {
-      write(render.site.section(section.feed.id, p), render.sectionPage({ config: cfg, sections, section, page: p, size: SIZE, now }));
+      write(render.site.section(section.id, p), render.sectionPage({ config: cfg, sections, section, page: p, size: SIZE, now }));
     }
     for (const story of section.stories) {
       const n = render.articleChunks(cfg, story, SIZE).length;

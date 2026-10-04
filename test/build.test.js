@@ -27,7 +27,9 @@ test('static build: every page exists and links stay under the base path', async
   const base = `http://127.0.0.1:${feedServer.address().port}`;
   config.save({
     storiesPerPage: 3,
-    feeds: [{ id: 'local', name: 'Local', url: `${base}/rss.xml` }, { id: 'atom', name: 'Atom', url: `${base}/atom.xml`, frontPage: false }],
+    feeds: [{ id: 'local', name: 'Local', url: `${base}/rss.xml` }, { id: 'atom', name: 'Atom', url: `${base}/atom.xml`, frontPage: false },
+      // Same name as the first feed: merged into the Local section, but kept off the front page.
+      { id: 'local-cafe', name: 'local', url: `${base}/rdf.xml`, frontPage: false }],
   });
 
   await build();
@@ -59,6 +61,14 @@ test('static build: every page exists and links stay under the base path', async
   for (const f of fronts) assert.doesNotMatch(fs.readFileSync(f, 'utf8'), /Markets Rally|Plain Entry/, `${f} omits the Atom feed`);
   assert.match(fs.readFileSync(path.join(out, 'section/atom/index.html'), 'utf8'), /Markets Rally/);
   assert.match(front, /href="\/my-paper\/section\/atom\/"/, 'section still linked in the nav');
+
+  // Feeds sharing a name form one section with one nav link.
+  const local = fs.readFileSync(path.join(out, 'section/local/index.html'), 'utf8');
+  assert.match(local, /Council Approves/);
+  assert.match(local, /Caf\u00e9 opens downtown/);
+  assert.equal((front.match(/section\/local\//g) || []).length, 1, 'one nav link for the merged section');
+  assert.ok(!fs.existsSync(path.join(out, 'section/local-cafe')), 'no separate section for the merged feed');
+  for (const f of fronts) assert.doesNotMatch(fs.readFileSync(f, 'utf8'), /Caf\u00e9 opens/, 'frontPage: false applies per feed');
   assert.match(front, /Edit feeds/);
   assert.match(front, /Printed /);
 });
