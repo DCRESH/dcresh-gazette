@@ -69,7 +69,7 @@ async function build() {
       const label = s.feed.label || (section.sources.length > 1 ? `${section.name} (${s.feed.url})` : section.name);
       const strip = s.latest;
       const result = s.error || (s.feed.type === 'comic'
-        ? (strip ? `strip for ${new Date(strip.date || now).toLocaleDateString('en-US', { timeZone: process.env.TZ || 'UTC', month: 'short', day: 'numeric' })}${strip.image ? ` (${strip.image})` : ' \u2014 NO IMAGE FOUND'}` : 'no strips in feed')
+        ? (strip ? `strip for ${new Date(strip.date || now).toLocaleDateString('en-US', { timeZone: process.env.TZ || 'UTC', month: 'short', day: 'numeric' })} \u00b7 \u201c${strip.title}\u201d \u00b7 ${strip.date ? new Date(strip.date).toISOString() : 'no date'}${strip.image ? ` (${strip.image})` : ' \u2014 NO IMAGE FOUND'}` : 'no strips in feed')
         : `${s.count} stories`);
       console.log(`${s.error ? 'FAIL' : ' ok '} ${label.padEnd(24)} ${result}`);
       summary.push(`| ${label} | ${s.error ? `\u274c ${s.error}` : `\u2705 ${result}`} |`);
