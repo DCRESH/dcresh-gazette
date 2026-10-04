@@ -36,7 +36,7 @@ To turn it on:
 
 Some things work differently in the static edition:
 
-* **Changing feeds:** there's no Settings page. Edit `config.json` on GitHub; the footer has an *Edit feeds* link to it. Saving the file publishes a new edition within a couple of minutes.
+* **Changing feeds:** there's no Settings page. Edit `config.json` on GitHub; saving it publishes a new edition within a couple of minutes. To show an *Edit feeds* link in the footer, remove the `EDIT_URL: ''` line from the workflow.
 * **Bylines** show the time each story was published, not "3 hrs ago", because a static page can't keep relative times current.
 * **No text-size buttons or Refresh link.** Use the Kindle browser's own zoom.
 * **Pictures**, if enabled, load directly from the news sites.

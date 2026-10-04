@@ -28,6 +28,7 @@ jobs:
       - run: node build.js
         env:
           REBUILD_MINUTES: 30
+          EDIT_URL: ''   # hide the "Edit feeds" link in the footer
           # Set a repository variable named TZ (e.g. America/New_York) for local datelines.
           TZ: ${{ vars.TZ || 'UTC' }}
       - uses: actions/upload-pages-artifact@v4
