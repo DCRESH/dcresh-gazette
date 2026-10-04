@@ -8,10 +8,11 @@
   "maxPerFeed": 30,
   "showImages": true,
   "feeds": [
-    { "id": "world", "name": "World", "url": "https://feeds.bbci.co.uk/news/world/rss.xml", "enabled": true },
-    { "id": "national", "name": "National", "url": "https://feeds.npr.org/1001/rss.xml", "enabled": true },
-    { "id": "technology", "name": "Technology", "url": "https://feeds.arstechnica.com/arstechnica/index", "enabled": true },
-    { "id": "science", "name": "Science", "url": "https://www.sciencedaily.com/rss/top/science.xml", "enabled": true },
-    { "id": "hacker-news", "name": "Hacker News", "url": "https://hnrss.org/frontpage", "enabled": true }
+    { "id": "world", "name": "World", "url": "https://feeds.bbci.co.uk/news/world/rss.xml", "enabled": false },
+    { "id": "national", "name": "National", "url": "https://feeds.npr.org/1001/rss.xml", "enabled": false },
+    { "id": "technology", "name": "Technology", "url": "https://feeds.arstechnica.com/arstechnica/index", "enabled": false },
+    { "id": "science", "name": "Science", "url": "https://www.sciencedaily.com/rss/top/science.xml", "enabled": false },
+    { "id": "hacker-news", "name": "Hacker News", "url": "https://hnrss.org/frontpage", "enabled": false }
+    { "id": "gospel-coalition", "name": "Gospel Coalition", "url": "https://www.thegospelcoalition.org/feed/", "enabled": true }
   ]
 }
