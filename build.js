@@ -34,6 +34,18 @@ function editUrl() {
   return repo ? `https://github.com/${repo}/edit/${process.env.GITHUB_REF_NAME || 'main'}/config.json` : null;
 }
 
+// GitHub Actions shows these as annotations on the run's page.
+function annotate(level, message, { title, file, line, col } = {}) {
+  if (!process.env.GITHUB_ACTIONS) return;
+  const props = Object.entries({ title, file, line, col }).filter(([, v]) => v !== undefined)
+    .map(([k, v]) => `${k}=${String(v).replace(/[,:\r\n%]/g, ' ')}`).join(',');
+  console.log(`::${level}${props ? ` ${props}` : ''}::${String(message).replace(/\r?\n/g, ' ')}`);
+}
+
+function writeSummary(markdown) {
+  if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
+}
+
 async function build() {
   const B = basePath();
   const pageDir = (prefix, p) => (p > 1 ? `${prefix}${p}/` : prefix);
@@ -48,15 +60,21 @@ async function build() {
     builtAt: Date.now(),
   });
 
-  const cfg = config.load();
+  const cfg = config.load({ strict: true });
   const sections = await feeds.getEdition(cfg);
+  const summary = ['| Feed | Result |', '| --- | --- |'];
   for (const s of sections) {
-    console.log(`${s.error ? 'FAIL' : ' ok '} ${s.feed.name.padEnd(24)} ${s.error || `${s.stories.length} stories`}`);
+    const result = s.error || `${s.stories.length} stories`;
+    console.log(`${s.error ? 'FAIL' : ' ok '} ${s.feed.name.padEnd(24)} ${result}`);
+    summary.push(`| ${s.feed.name} | ${s.error ? `\u274c ${s.error}` : `\u2705 ${result}`} |`);
+    if (s.error) annotate('warning', `${s.feed.name}: ${s.error} (${s.feed.url})`, { title: 'Feed failed' });
+    else annotate('notice', `${s.feed.name}: ${result}`, { title: 'Feed loaded' });
   }
+  writeSummary(`### Edition feeds\n\n${summary.join('\n')}\n`);
   const total = sections.reduce((n, s) => n + s.stories.length, 0);
-  if (cfg.feeds.some((f) => f.enabled) && total === 0) {
+  if (total === 0) {
     // Leave the previous deployment in place rather than publishing an empty paper.
-    throw new Error('Every feed failed; not publishing.');
+    throw new Error(cfg.feeds.some((f) => f.enabled) ? 'Every feed failed; not publishing.' : 'No feeds are enabled in config.json; not publishing.');
   }
 
   fs.rmSync(OUT, { recursive: true, force: true });
@@ -96,6 +114,8 @@ async function build() {
 if (require.main === module) {
   build().catch((e) => {
     console.error(e.message);
+    annotate('error', e.message, { title: 'Edition not published', file: e.line ? 'config.json' : undefined, line: e.line, col: e.col });
+    writeSummary(`### \u274c Edition not published\n\n${e.message}\n\nThe previous edition is still online.\n`);
     process.exit(1);
   });
 }

@@ -62,3 +62,8 @@ test('static build refuses to publish when every feed fails', async () => {
   require('../lib/feeds').clearCache();
   await assert.rejects(build(), /Every feed failed/);
 });
+
+test('static build refuses to publish a config.json with a JSON typo', async () => {
+  fs.writeFileSync(process.env.CONFIG_PATH, '{ "feeds": [ { "url": "http://a" } { "url": "http://b" } ] }');
+  await assert.rejects(build(), (e) => /not valid JSON/.test(e.message) && e.line === 1);
+});
