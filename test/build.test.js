@@ -27,12 +27,12 @@ test('static build: every page exists and links stay under the base path', async
   const base = `http://127.0.0.1:${feedServer.address().port}`;
   config.save({
     storiesPerPage: 3,
-    feeds: [{ id: 'local', name: 'Local', url: `${base}/rss.xml` }, { id: 'atom', name: 'Atom', url: `${base}/atom.xml` }],
+    feeds: [{ id: 'local', name: 'Local', url: `${base}/rss.xml` }, { id: 'atom', name: 'Atom', url: `${base}/atom.xml`, frontPage: false }],
   });
 
   await build();
   const out = process.env.OUT_DIR;
-  for (const f of ['index.html', 'page/2/index.html', 'section/local/index.html', 'section/atom/index.html', '404.html', '.nojekyll']) {
+  for (const f of ['index.html', 'section/local/index.html', 'section/atom/index.html', '404.html', '.nojekyll']) {
     assert.ok(fs.existsSync(path.join(out, f)), `${f} exists`);
   }
 
@@ -41,7 +41,7 @@ test('static build: every page exists and links stay under the base path', async
   const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).forEach((e) =>
     (e.isDirectory() ? walk(path.join(d, e.name)) : e.name.endsWith('.html') && files.push(path.join(d, e.name))));
   walk(out);
-  assert.ok(files.length >= 10);
+  assert.ok(files.length >= 8);
   for (const f of files) {
     const html = fs.readFileSync(f, 'utf8');
     assert.doesNotMatch(html, /<script|\/refresh|\/settings|\/prefs|\/img\?/, `${f} has no server-only features`);
@@ -53,6 +53,12 @@ test('static build: every page exists and links stay under the base path', async
   }
 
   const front = fs.readFileSync(path.join(out, 'index.html'), 'utf8');
+  // A feed with frontPage: false keeps its section page but stays off the front page.
+  const fronts = files.filter((f) => /^(index\.html|page\/\d+\/index\.html)$/.test(path.relative(out, f)));
+  assert.ok(fronts.length >= 1);
+  for (const f of fronts) assert.doesNotMatch(fs.readFileSync(f, 'utf8'), /Markets Rally|Plain Entry/, `${f} omits the Atom feed`);
+  assert.match(fs.readFileSync(path.join(out, 'section/atom/index.html'), 'utf8'), /Markets Rally/);
+  assert.match(front, /href="\/my-paper\/section\/atom\/"/, 'section still linked in the nav');
   assert.match(front, /Edit feeds/);
   assert.match(front, /Printed /);
 });

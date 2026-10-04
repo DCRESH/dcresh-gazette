@@ -135,7 +135,7 @@ async function handleSettingsPost(req, res) {
       const url = safeUrl(form.get('url') || '');
       if (!url) error = 'Please enter a full http:// or https:// address.';
       else {
-        c.feeds[i] = { ...c.feeds[i], name: (form.get('name') || '').trim() || c.feeds[i].name, url, enabled: form.has('enabled') };
+        c.feeds[i] = { ...c.feeds[i], name: (form.get('name') || '').trim() || c.feeds[i].name, url, enabled: form.has('enabled'), frontPage: form.has('frontPage') };
         message = 'Saved.';
       }
     }

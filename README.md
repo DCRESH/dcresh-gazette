@@ -59,7 +59,7 @@ Everything in `config.json` can also be changed from **Settings**:
 | `refreshMinutes` | 20 | How long feeds are cached |
 | `maxPerFeed` | 30 | Newest stories kept per feed |
 | `showImages` | false | Show pictures, fetched through the server |
-| `feeds` | | `[{ "id", "name", "url", "enabled" }]` |
+| `feeds` | | `[{ "id", "name", "url", "enabled", "frontPage" }]`. Set `"frontPage": false` to keep a feed off the front page; it still gets its own section page. |
 
 When you add a feed you can paste a website's address instead of the feed's. The server finds the feed through the site's `<link rel="alternate">` tag. You can also import feeds by pasting OPML or a list of URLs, and export them from `/opml`.
 

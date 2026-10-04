@@ -89,7 +89,7 @@ async function build() {
   const pagesFor = (n) => Math.max(1, Math.ceil(n / cfg.storiesPerPage));
   const now = Date.now();
 
-  const frontPages = pagesFor(render.interleave(sections).length);
+  const frontPages = pagesFor(render.frontPageStories(sections).length);
   for (let p = 1; p <= frontPages; p++) {
     write(render.site.home(p), render.frontPage({ config: cfg, sections, page: p, size: SIZE, now }));
   }
