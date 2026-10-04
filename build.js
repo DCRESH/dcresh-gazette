@@ -109,6 +109,12 @@ async function build() {
   write(`${B}/404.html`, render.notFound({ config: cfg, size: SIZE, message: 'That story is no longer in this edition.' }));
   fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
   console.log(`Wrote ${files} pages (${total} stories) to ${OUT} for base path "${B || '/'}"`);
+  const ed = render.editionNumber(cfg.founded, now);
+  const tz = process.env.TZ || 'UTC';
+  const printed = new Date(now).toLocaleString('en-US', { timeZone: tz, dateStyle: 'medium', timeStyle: 'short' });
+  const edition = `${ed ? `Vol. ${ed.volume}, No. ${ed.issue} · ` : ''}printed ${printed} (${tz}) · ${total} stories`;
+  annotate('notice', edition, { title: 'Edition published' });
+  writeSummary(`\n**${edition}**\n`);
 }
 
 if (require.main === module) {
