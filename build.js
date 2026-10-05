@@ -19,6 +19,7 @@ const path = require('path');
 const config = require('./lib/config');
 const feeds = require('./lib/feeds');
 const render = require('./lib/render');
+const { lastEditionTime } = require('./lib/schedule');
 const { toText } = require('./lib/sanitize');
 
 const SIZE = 'm';
@@ -48,16 +49,24 @@ function writeSummary(markdown) {
   if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
 }
 
-function editionInfo() {
+// The edition a build belongs to is the most recent edition time (e.g. a
+// 2 PM rebuild is still the morning edition; 3 AM is still last evening's).
+function editionName(hour) {
+  return hour < 12 ? 'Morning Edition' : hour < 17 ? 'Afternoon Edition' : 'Evening Edition';
+}
+
+function editionInfo(now = Date.now()) {
   const hours = (process.env.EDITION_HOURS || '').match(/\d+/g);
   if (!hours) return {};
   const tz = process.env.TZ || 'UTC';
+  const sorted = hours.map(Number).sort((a, b) => a - b);
   const fmt = (h) => `${h % 12 || 12} ${h < 12 ? 'AM' : 'PM'}`;
-  const list = hours.map(Number).sort((a, b) => a - b).map(fmt);
-  const localHour = +new Date().toLocaleString('en-US', { timeZone: tz, hour: 'numeric', hourCycle: 'h23' });
+  const list = sorted.map(fmt);
+  const slot = lastEditionTime(sorted, tz, now);
+  const slotHour = +new Date(slot).toLocaleString('en-US', { timeZone: tz, hour: 'numeric', hourCycle: 'h23' });
   return {
     scheduleNote: `New editions at ${list.length > 1 ? `${list.slice(0, -1).join(', ')} and ${list[list.length - 1]}` : list[0]}`,
-    editionName: localHour < 12 ? 'Morning Edition' : 'Evening Edition',
+    editionName: editionName(slotHour),
   };
 }
 
@@ -154,4 +163,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { build };
+module.exports = { build, editionInfo };

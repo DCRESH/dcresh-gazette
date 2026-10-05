@@ -29,3 +29,21 @@ test('an edition is due until the paper has been printed since the last edition 
   // Unknown (no edition.json yet): publish.
   assert.equal(editionDue({ ...base, lastPrinted: null }).due, true);
 });
+
+test('the masthead names the edition after the most recent edition time', () => {
+  const { editionInfo } = require('../build');
+  const saved = { h: process.env.EDITION_HOURS, tz: process.env.TZ };
+  process.env.EDITION_HOURS = '6 18';
+  process.env.TZ = NY;
+  try {
+    const name = (s) => editionInfo(Date.parse(s)).editionName;
+    assert.equal(name('2026-10-05T13:44:00Z'), 'Morning Edition'); // 9:44 AM
+    assert.equal(name('2026-10-05T18:00:00Z'), 'Morning Edition'); // 2 PM: still the morning edition
+    assert.equal(name('2026-10-05T22:30:00Z'), 'Evening Edition'); // 6:30 PM
+    assert.equal(name('2026-10-06T07:00:00Z'), 'Evening Edition'); // 3 AM: still last evening's
+    assert.equal(editionInfo(Date.parse('2026-10-05T13:44:00Z')).scheduleNote, 'New editions at 6 AM and 6 PM');
+  } finally {
+    if (saved.h === undefined) delete process.env.EDITION_HOURS; else process.env.EDITION_HOURS = saved.h;
+    if (saved.tz === undefined) delete process.env.TZ; else process.env.TZ = saved.tz;
+  }
+});
