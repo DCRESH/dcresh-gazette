@@ -133,6 +133,9 @@ async function build() {
 
   write(`${B}/404.html`, render.notFound({ config: cfg, size: SIZE, message: 'That story is no longer in this edition.' }));
   fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
+  // Read by scripts/edition-due.js to decide whether a scheduled edition is due.
+  const ed0 = render.editionNumber(cfg.founded, now);
+  fs.writeFileSync(path.join(OUT, 'edition.json'), JSON.stringify({ printedAt: new Date(now).toISOString(), ...(ed0 || {}) }) + '\n');
   console.log(`Wrote ${files} pages (${total} stories) to ${OUT} for base path "${B || '/'}"`);
   const ed = render.editionNumber(cfg.founded, now);
   const tz = process.env.TZ || 'UTC';
