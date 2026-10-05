@@ -17,6 +17,7 @@
     {"id": "peanuts", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/peanuts", "enabled": true, "frontPage": false, "type": "comic", "label": "Peanuts"},
     {"id": "calvin-and-hobbes", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/calvinandhobbes", "enabled": true, "frontPage": false, "type": "comic", "label": "Calvin and Hobbes", "showText": false},
     {"id": "garfield", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/garfield", "enabled": true, "frontPage": false, "type": "comic", "label": "Garfield", "showText": false},
+     {"id": "get-fuzzy", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/getfuzzy", "enabled": true, "frontPage": false, "type": "comic", "label": "Get Fuzzy", "showText": false},
     {"id": "far-side", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/farside-daily", "enabled": true, "frontPage": false, "type": "comic", "label": "The Far Side", "showText": true}
   ]
 }
