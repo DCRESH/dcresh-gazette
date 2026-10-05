@@ -14,7 +14,7 @@
     { "id": "gospel-coalition", "name": "Christianity", "url": "https://www.thegospelcoalition.org/feed", "enabled": true },
     {"id": "pearls-before-swine", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/pearlsbeforeswine", "enabled": true, "frontPage": false, "type": "comic", "label": "Pearls Before Swine"},
     {"id": "peanuts", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/peanuts", "enabled": true, "frontPage": false, "type": "comic", "label": "Peanuts"},
-    {"id": "far-side", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/farside-daily", "enabled": true, "frontPage": false, "type": "comic", "label": "The Far Side", "showText": true},
-    {"id": "calvin-and-hobbes", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/calvinandhobbes", "enabled": true, "frontPage": false, "type": "comic", "label": "Calvin and Hobbes", "showText": false}
+     {"id": "calvin-and-hobbes", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/calvinandhobbes", "enabled": true, "frontPage": false, "type": "comic", "label": "Calvin and Hobbes", "showText": false},
+    {"id": "far-side", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/farside-daily", "enabled": true, "frontPage": false, "type": "comic", "label": "The Far Side", "showText": true}
   ]
 }
