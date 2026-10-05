@@ -11,7 +11,7 @@
   "showImages": true,
   "comicMaxHeight": 55,
   "feeds": [
-    { "id": "gospel-coalition", "name": "Gospel Coalition", "url": "https://www.thegospelcoalition.org/feed", "enabled": true },
+    { "id": "gospel-coalition", "name": "Christianity", "url": "https://www.thegospelcoalition.org/feed", "enabled": true },
     {"id": "pearls-before-swine", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/pearlsbeforeswine", "enabled": true, "frontPage": false, "type": "comic", "label": "Pearls Before Swine"},
     {"id": "peanuts", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/peanuts", "enabled": true, "frontPage": false, "type": "comic", "label": "Peanuts"},
     {"id": "far-side", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/farside-daily", "enabled": true, "frontPage": false, "type": "comic", "label": "The Far Side", "showText": true},
