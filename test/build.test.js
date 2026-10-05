@@ -156,3 +156,37 @@ test('maxAgeHours limits the front page; section pages show everything', async (
   assert.match(fs.readFileSync(path.join(process.env.OUT_DIR, 'index.html'), 'utf8'), /Nothing new in the last 1 hour\./);
   assert.match(fs.readFileSync(path.join(process.env.OUT_DIR, 'section/fresh/index.html'), 'utf8'), /Thirty Hours Old/);
 });
+
+test('funny pages: compact panels share a row sized to equal heights; wide strips get their own', async (t) => {
+  const { png } = require('./images');
+  const sizes = { wide1: [1400, 450], panel1: [900, 1100], wide2: [1400, 430], panel2: [1000, 1000] };
+  const server = http.createServer((req, res) => {
+    const name = path.basename(req.url).replace(/\.(png|xml)$/, '');
+    if (req.url.endsWith('.png') && sizes[name]) { res.writeHead(200, { 'Content-Type': 'image/png' }); return res.end(Buffer.from(png(...sizes[name]))); }
+    if (req.url.endsWith('.xml') && sizes[name]) {
+      res.writeHead(200, { 'Content-Type': 'application/xml' });
+      return res.end(`<?xml version="1.0"?><rss version="2.0"><channel><title>${name}</title><link>https://x.example/</link><item><title>${name} - 2026-10-05</title><link>https://x.example/${name}</link><pubDate>Mon, 05 Oct 2026 00:00:00 GMT</pubDate><description><![CDATA[<img src="http://127.0.0.1:${server.address().port}/${name}.png">]]></description></item></channel></rss>`);
+    }
+    res.writeHead(404); res.end();
+  });
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  t.after(() => server.close());
+  const base = `http://127.0.0.1:${server.address().port}`;
+  config.save({
+    feeds: Object.keys(sizes).map((id) => ({ id, name: 'Funny Pages', url: `${base}/${id}.xml`, type: 'comic', label: id, frontPage: false })),
+  });
+  require('../lib/feeds').clearCache();
+  await build();
+  const html = fs.readFileSync(path.join(process.env.OUT_DIR, 'section/funny-pages/index.html'), 'utf8');
+  const rows = html.split('<div class="strip-row').slice(1);
+  assert.equal(rows.length, 3, 'wide1 | panel1 + panel2 | wide2');
+  assert.match(rows[0], /wide1\.png/);
+  assert.doesNotMatch(rows[0], /table class="pair"/);
+  assert.match(rows[1], /table class="pair"/);
+  assert.ok(rows[1].indexOf('panel1') < rows[1].indexOf('panel2'));
+  // 900x1100 (0.818) beside 1000x1000 (1.0): widths 45%/55% give equal heights.
+  assert.match(rows[1], /class="pl" style="width:45\.00%"/);
+  assert.match(rows[1], /class="pr" style="width:55\.00%"/);
+  assert.match(rows[2], /wide2\.png/);
+  assert.match(rows[2], /^ end"/, 'last row has no rule under it');
+});
