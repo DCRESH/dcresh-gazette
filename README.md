@@ -1,4 +1,4 @@
-# The Kindle Gazette
+# The Gazette
 
 A self-hosted RSS reader that lays your feeds out as a classic broadsheet newspaper, with a masthead, a lead story, columns and section pages. It is built for the Kindle web browser.
 
