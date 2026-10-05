@@ -3,10 +3,10 @@
 // Reads when the live paper was last printed from its edition.json and
 // compares it with the most recent edition time (EDITION_HOURS in TZ).
 //
-//   EDITION_HOURS='6 18' TZ=America/New_York GITHUB_REPOSITORY=owner/repo node scripts/edition-due.js
+//   EDITION_HOURS='hourly' (or '6 18') TZ=America/New_York GITHUB_REPOSITORY=owner/repo node scripts/edition-due.js
 //   PAGES_URL overrides the site address (default https://<owner>.github.io/<repo>/).
 
-const { editionDue } = require('../lib/schedule');
+const { editionDue, parseEditionHours } = require('../lib/schedule');
 
 async function lastPrinted(url) {
   try {
@@ -20,7 +20,7 @@ async function lastPrinted(url) {
 }
 
 (async () => {
-  const hours = (process.env.EDITION_HOURS || '6 18').match(/\d+/g).map(Number);
+  const hours = parseEditionHours(process.env.EDITION_HOURS) || parseEditionHours('hourly');
   const timeZone = process.env.TZ || 'UTC';
   const [owner, repo] = (process.env.GITHUB_REPOSITORY || '/').split('/');
   const site = process.env.PAGES_URL || (/\.github\.io$/i.test(repo) ? `https://${owner.toLowerCase()}.github.io/` : `https://${owner.toLowerCase()}.github.io/${repo}/`);

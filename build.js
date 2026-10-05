@@ -10,7 +10,7 @@
 //   BASE_PATH         URL prefix the site is served under. Defaults to
 //                     "/<repo>" from GITHUB_REPOSITORY, or "" for <user>.github.io repos.
 //   EDIT_URL          link shown as "Edit feeds" in the footer
-//   EDITION_HOURS     local hours the scheduled editions are printed, e.g. "6 18".
+//   EDITION_HOURS     when scheduled editions are printed: "hourly", or local hours like "6 18".
 //                     Shown in the footer; names the edition Morning/Evening.
 //   TZ                time zone for datelines
 
@@ -19,7 +19,7 @@ const path = require('path');
 const config = require('./lib/config');
 const feeds = require('./lib/feeds');
 const render = require('./lib/render');
-const { lastEditionTime } = require('./lib/schedule');
+const { lastEditionTime, parseEditionHours } = require('./lib/schedule');
 const { toText } = require('./lib/sanitize');
 
 const SIZE = 'm';
@@ -56,16 +56,16 @@ function editionName(hour) {
 }
 
 function editionInfo(now = Date.now()) {
-  const hours = (process.env.EDITION_HOURS || '').match(/\d+/g);
+  const hours = parseEditionHours(process.env.EDITION_HOURS);
   if (!hours) return {};
   const tz = process.env.TZ || 'UTC';
-  const sorted = hours.map(Number).sort((a, b) => a - b);
+  const sorted = hours;
   const fmt = (h) => `${h % 12 || 12} ${h < 12 ? 'AM' : 'PM'}`;
   const list = sorted.map(fmt);
   const slot = lastEditionTime(sorted, tz, now);
   const slotHour = +new Date(slot).toLocaleString('en-US', { timeZone: tz, hour: 'numeric', hourCycle: 'h23' });
   return {
-    scheduleNote: `New editions at ${list.length > 1 ? `${list.slice(0, -1).join(', ')} and ${list[list.length - 1]}` : list[0]}`,
+    scheduleNote: sorted.length === 24 ? 'New edition every hour' : `New editions at ${list.length > 1 ? `${list.slice(0, -1).join(', ')} and ${list[list.length - 1]}` : list[0]}`,
     editionName: editionName(slotHour),
   };
 }

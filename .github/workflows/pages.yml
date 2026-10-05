@@ -4,11 +4,12 @@ on:
   push:
     branches: [main]       # editing config.json publishes a new edition right away
   schedule:
-    # Two editions a day, at EDITION_HOURS in the paper's time zone. GitHub's
-    # scheduler often runs late or skips runs, so wake every hour and publish
-    # only when an edition time has passed since the paper was last printed
-    # (see scripts/edition-due.js). A late wake-up still delivers the edition.
-    - cron: '17 * * * *'
+    # A new edition every hour (EDITION_HOURS). GitHub's scheduler often runs
+    # late or skips runs, so wake twice an hour and publish only when an
+    # edition time has passed since the paper was last printed (see
+    # scripts/edition-due.js): a late or skipped wake-up can't cause a missed
+    # or doubled edition.
+    - cron: '17,47 * * * *'
   workflow_dispatch:       # "Run workflow" button for an immediate edition
 
 permissions:
@@ -21,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  EDITION_HOURS: '6 18'
+  EDITION_HOURS: 'hourly'   # or local hours, e.g. '6 18' for 6 AM and 6 PM
   # The paper's time zone. Set a repository variable named TZ to change it.
   TZ: ${{ vars.TZ || 'America/New_York' }}
 

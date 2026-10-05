@@ -47,3 +47,27 @@ test('the masthead names the edition after the most recent edition time', () => 
     if (saved.tz === undefined) delete process.env.TZ; else process.env.TZ = saved.tz;
   }
 });
+
+test('hourly editions', () => {
+  const { parseEditionHours } = require('../lib/schedule');
+  assert.equal(parseEditionHours('hourly').length, 24);
+  assert.deepEqual(parseEditionHours('18 6'), [6, 18]);
+  assert.equal(parseEditionHours(''), null);
+  const hours = parseEditionHours('hourly');
+  const now = Date.parse('2026-10-05T14:20:00Z'); // 10:20 AM New York
+  assert.equal(new Date(lastEditionTime(hours, NY, now)).toISOString(), '2026-10-05T14:00:00.000Z');
+  assert.equal(editionDue({ hours, timeZone: NY, now, lastPrinted: Date.parse('2026-10-05T13:50:00Z') }).due, true);
+  assert.equal(editionDue({ hours, timeZone: NY, now, lastPrinted: Date.parse('2026-10-05T14:05:00Z') }).due, false);
+  const { editionInfo } = require('../build');
+  const saved = { h: process.env.EDITION_HOURS, tz: process.env.TZ };
+  process.env.EDITION_HOURS = 'hourly'; process.env.TZ = NY;
+  try {
+    assert.equal(editionInfo(now).scheduleNote, 'New edition every hour');
+    assert.equal(editionInfo(now).editionName, 'Morning Edition');
+    assert.equal(editionInfo(Date.parse('2026-10-05T18:20:00Z')).editionName, 'Afternoon Edition'); // 2:20 PM
+    assert.equal(editionInfo(Date.parse('2026-10-05T23:20:00Z')).editionName, 'Evening Edition'); // 7:20 PM
+  } finally {
+    if (saved.h === undefined) delete process.env.EDITION_HOURS; else process.env.EDITION_HOURS = saved.h;
+    if (saved.tz === undefined) delete process.env.TZ; else process.env.TZ = saved.tz;
+  }
+});
