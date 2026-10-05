@@ -149,7 +149,7 @@ async function build() {
   const ed = render.editionNumber(cfg.founded, now);
   const tz = process.env.TZ || 'UTC';
   const printed = new Date(now).toLocaleString('en-US', { timeZone: tz, dateStyle: 'medium', timeStyle: 'short' });
-  const edition = `${ed ? `Vol. ${ed.volume}, No. ${ed.issue} · ` : ''}printed ${printed} (${tz}) · ${total} stories`;
+  const edition = `${render.site.editionName} · ${ed ? `Vol. ${ed.volume}, No. ${ed.issue} · ` : ''}printed ${printed} (${tz}) · ${total} stories`;
   annotate('notice', edition, { title: 'Edition published' });
   writeSummary(`\n**${edition}**\n`);
 }
