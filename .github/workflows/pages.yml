@@ -4,13 +4,11 @@ on:
   push:
     branches: [main]       # editing config.json publishes a new edition right away
   schedule:
-    # A new edition every hour (EDITION_HOURS). GitHub's scheduler drops many
-    # scheduled runs and delays others, so wake every 15 minutes and publish
-    # only when an edition time has passed since the paper was last printed
-    # (see scripts/edition-due.js): late or dropped wake-ups can't cause a
-    # missed or doubled edition. A wake-up that finds the paper current stops
-    # after a few seconds.
-    - cron: '7,22,37,52 * * * *'
+    # A new edition every hour (EDITION_HOURS): wake once an hour. The
+    # due-check (scripts/edition-due.js) skips the build if the paper was
+    # already printed this hour, e.g. by a push. GitHub sometimes delays or
+    # drops scheduled runs, so an hour can occasionally be missed.
+    - cron: '7 * * * *'
   workflow_dispatch:       # "Run workflow" button for an immediate edition
 
 permissions:
