@@ -47,8 +47,10 @@ test('static build: every page exists and links stay under the base path', async
   for (const f of files) {
     const html = fs.readFileSync(f, 'utf8');
     assert.doesNotMatch(html, /<script|\/refresh|\/settings|\/prefs|\/img\?/, `${f} has no server-only features`);
-    for (const [, href] of html.matchAll(/(?:href|src)="(\/[^"]*)"/g)) {
-      assert.ok(href.startsWith('/my-paper/'), `${href} in ${f} is under the base path`);
+    for (const [, link] of html.matchAll(/(?:href|src)="(\/[^"]*)"/g)) {
+      assert.ok(link.startsWith('/my-paper/'), `${link} in ${f} is under the base path`);
+      assert.match(link, /\?e=[0-9a-z]+$/, `${link} in ${f} carries the edition stamp`);
+      const href = link.split('?')[0];
       const target = path.join(out, href.slice('/my-paper/'.length));
       assert.ok(fs.existsSync(href.endsWith('/') ? path.join(target, 'index.html') : target), `${href} in ${f} exists`);
     }
@@ -60,7 +62,9 @@ test('static build: every page exists and links stay under the base path', async
   assert.ok(fronts.length >= 1);
   for (const f of fronts) assert.doesNotMatch(fs.readFileSync(f, 'utf8'), /Markets Rally|Plain Entry/, `${f} omits the Atom feed`);
   assert.match(fs.readFileSync(path.join(out, 'section/atom/index.html'), 'utf8'), /Markets Rally/);
-  assert.match(front, /href="\/my-paper\/section\/atom\/"/, 'section still linked in the nav');
+  assert.match(front, /href="\/my-paper\/section\/atom\/\?e=/, 'section still linked in the nav');
+  assert.match(front, /http-equiv="Cache-Control" content="no-cache/);
+  assert.match(front, /Latest edition<\/a>/);
 
   // Feeds sharing a name form one section with one nav link.
   const local = fs.readFileSync(path.join(out, 'section/local/index.html'), 'utf8');

@@ -73,15 +73,20 @@ function editionInfo(now = Date.now()) {
 async function build() {
   const B = basePath();
   const pageDir = (prefix, p) => (p > 1 ? `${prefix}${p}/` : prefix);
+  // Cache-busting: every link carries this edition's stamp (?e=...). GitHub
+  // Pages ignores the query but browsers cache by full address, so links from
+  // a new edition always fetch fresh pages instead of reusing old copies.
+  const builtAt = Date.now();
+  const v = `?e=${Math.floor(builtAt / 60000).toString(36)}`;
   render.configure({
     static: true,
-    home: (p) => (p > 1 ? `${B}/page/${p}/` : `${B}/`),
-    section: (id, p) => pageDir(`${B}/section/${id}/`, p),
-    article: (id, p) => pageDir(`${B}/article/${id}/`, p),
+    home: (p) => (p > 1 ? `${B}/page/${p}/` : `${B}/`) + v,
+    section: (id, p) => pageDir(`${B}/section/${id}/`, p) + v,
+    article: (id, p) => pageDir(`${B}/article/${id}/`, p) + v,
     image: (url) => url, // no image proxy on a static host
     editFeeds: editUrl(),
     ...editionInfo(),
-    builtAt: Date.now(),
+    builtAt,
   });
 
   const cfg = config.load({ strict: true });
@@ -115,7 +120,7 @@ async function build() {
   fs.rmSync(OUT, { recursive: true, force: true });
   let files = 0;
   const write = (url, html) => {
-    const rel = url.slice(B.length).replace(/^\/+/, '');
+    const rel = url.split('?')[0].slice(B.length).replace(/^\/+/, '');
     const file = path.join(OUT, rel.endsWith('/') || rel === '' ? `${rel}index.html` : rel);
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, html);
