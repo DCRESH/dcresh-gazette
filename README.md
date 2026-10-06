@@ -25,7 +25,7 @@ To read it on a Kindle, open **Experimental Browser** and go to `http://<compute
 
 ## Hosting free on GitHub Pages
 
-You don't need a server. A GitHub Actions job (`.github/workflows/pages.yml`) builds the whole paper as static HTML and publishes it to GitHub Pages: a new edition every hour, and right away on every push to `main`. GitHub's scheduler often runs late or skips runs, so the workflow wakes twice an hour and publishes only when an edition is due (it checks the site's `edition.json`). To print at set times instead, change `EDITION_HOURS` in the workflow to local hours, e.g. `'6 18'` for 6 AM and 6 PM. The address will be `https://<user>.github.io/<repo>/`.
+You don't need a server. A GitHub Actions job (`.github/workflows/pages.yml`) builds the whole paper as static HTML and publishes it to GitHub Pages: a new edition every hour, and right away on every push to `main`. GitHub's scheduler often runs late or skips runs, so the workflow wakes every 15 minutes and publishes only when an edition is due (it checks the site's `edition.json`). To print at set times instead, change `EDITION_HOURS` in the workflow to local hours, e.g. `'6 18'` for 6 AM and 6 PM. The address will be `https://<user>.github.io/<repo>/`.
 
 To turn it on:
 

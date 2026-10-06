@@ -4,22 +4,19 @@ on:
   push:
     branches: [main]       # editing config.json publishes a new edition right away
   schedule:
-    # A new edition every hour (EDITION_HOURS). GitHub's scheduler often runs
-    # late or skips runs, so wake twice an hour and publish only when an
-    # edition time has passed since the paper was last printed (see
-    # scripts/edition-due.js): a late or skipped wake-up can't cause a missed
-    # or doubled edition.
-    - cron: '17,47 * * * *'
+    # A new edition every hour (EDITION_HOURS). GitHub's scheduler drops many
+    # scheduled runs and delays others, so wake every 15 minutes and publish
+    # only when an edition time has passed since the paper was last printed
+    # (see scripts/edition-due.js): late or dropped wake-ups can't cause a
+    # missed or doubled edition. A wake-up that finds the paper current stops
+    # after a few seconds.
+    - cron: '7,22,37,52 * * * *'
   workflow_dispatch:       # "Run workflow" button for an immediate edition
 
 permissions:
   contents: read
   pages: write
   id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 env:
   EDITION_HOURS: 'hourly'   # or local hours, e.g. '6 18' for 6 AM and 6 PM
@@ -43,10 +40,18 @@ jobs:
             echo "publish=true" >> "$GITHUB_OUTPUT"
           fi
 
+  # Only runs that publish take part in these queues: a newer edition cancels
+  # an older one still building or deploying, including a deploy stuck
+  # waiting on GitHub Pages (which once blocked every later edition for
+  # hours). Wake-ups that find the paper current never get this far, so they
+  # can't cancel an edition you just triggered.
   build:
     needs: when
     if: needs.when.outputs.publish == 'true'
     runs-on: ubuntu-latest
+    concurrency:
+      group: pages-build
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -63,6 +68,10 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
