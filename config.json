@@ -12,6 +12,7 @@
   "comicMaxHeight": 55,
   "feeds": [
     { "id": "gospel-coalition", "name": "Christianity", "url": "https://www.thegospelcoalition.org/feed", "enabled": true },
+    { "id": "wkmg-six", "name": "Local News", "url": "https://www.clickorlando.com/arc/outboundfeeds/rss/category/news/?outputType=xml&size=10", "enabled": true },
     { "id": "wesh-two", "name": "Local News", "url": "https://www.wesh.com/topstories-rss", "enabled": true },
     {"id": "pearls-before-swine", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/pearlsbeforeswine", "enabled": true, "frontPage": false, "type": "comic", "label": "Pearls Before Swine"},
     {"id": "peanuts", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/peanuts", "enabled": true, "frontPage": false, "type": "comic", "label": "Peanuts"},
