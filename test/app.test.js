@@ -124,7 +124,7 @@ test('end to end: front page, section, article, settings', async (t) => {
   html = await res.text();
   assert.equal(res.status, 200);
   assert.match(html, /council voted/);
-  assert.match(html, /Jane Reporter/);
+  assert.match(html, /<div class="byline">By Jane Reporter · [^<]* · <a class="u" href="https:\/\/example\.com\/bridge">The Daily Fixture<\/a><\/div>/, 'story page shows author, date and linked source');
   assert.doesNotMatch(html, /alert\(1\)/);
 
   res = await get('/section/cafe-society');
