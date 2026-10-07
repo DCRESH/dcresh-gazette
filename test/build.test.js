@@ -75,6 +75,9 @@ test('static build: every page exists and links stay under the base path', async
   for (const f of fronts) assert.doesNotMatch(fs.readFileSync(f, 'utf8'), /Caf\u00e9 opens/, 'frontPage: false applies per feed');
   assert.match(front, /Edit feeds/);
   assert.match(front, /Printed /);
+  // Each story lists its source (the feed's title) in its byline.
+  assert.match(front, /class="byline">By Jane Reporter · [^<]* · The Daily Fixture<\/div>/);
+  assert.match(local, /class="byline">[^<]*RDF Times<\/div>/, 'merged sections show each story\'s own source');
 });
 
 test('static build refuses to publish when every feed fails', async () => {
@@ -129,6 +132,7 @@ test('comic feeds: latest strip only, laid out as a funny pages in config order'
   // Not on the front page, and no news-style summaries.
   assert.doesNotMatch(fs.readFileSync(path.join(out, 'index.html'), 'utf8'), /comics\.example/);
   assert.doesNotMatch(funnies, /Continued/);
+  assert.doesNotMatch(funnies, /class="byline"/, 'comics have no news bylines');
 });
 
 test('maxAgeHours limits the front page; section pages show everything', async (t) => {
