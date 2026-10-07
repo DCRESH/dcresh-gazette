@@ -13,7 +13,6 @@
   "feeds": [
     { "id": "gospel-coalition", "name": "Christianity", "url": "https://www.thegospelcoalition.org/feed", "enabled": true },
     { "id": "wkmg-six", "name": "Local News", "url": "https://www.clickorlando.com/arc/outboundfeeds/rss/category/news/?outputType=xml&size=10", "enabled": true },
-    { "id": "wesh-two", "name": "Local News", "url": "https://www.wesh.com/topstories-rss", "enabled": true },
     { "id": "cbs-nfl", "name": "Sports", "url": "https://www.cbssports.com/rss/headlines/nfl/", "enabled": true, "frontPage": false },
     { "id": "cbs-nba", "name": "Sports", "url": "https://www.cbssports.com/rss/headlines/nba/", "enabled": true, "frontPage": false },
     { "id": "cbs-mlb", "name": "Sports", "url": "https://www.cbssports.com/rss/headlines/mlb/", "enabled": true, "frontPage": false },
