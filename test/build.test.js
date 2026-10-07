@@ -225,3 +225,35 @@ test('feeds that refuse unknown clients are retried as a browser, with a clear e
   assert.match(by.html.sources[0].error, /Not an RSS or Atom feed.*starting “<html><body>Access Denied/);
   assert.ok(seen.includes('/picky app') && seen.includes('/picky browser'));
 });
+
+test('advertisements are filtered out of news feeds', async (t) => {
+  const item = (title, extra = '') => `<item><title>${title}</title><link>https://n.example/${encodeURIComponent(title)}</link>${extra}<description>${title}.</description></item>`;
+  const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'application/xml' });
+    res.end(`<?xml version="1.0"?><rss version="2.0"><channel><title>Sports Wire</title><link>https://n.example/</link>
+      ${item('DraftKings promo code: Get $200 in bonus bets for Week 6')}
+      ${item('bet365 bonus code CBSBET: Bet $5, get $150')}
+      ${item('Daily deals: 40% off e-readers')}
+      ${item('Mattress buying guide', '<category>Sponsored Content</category>')}
+      ${item('Chiefs vs. Bills odds, picks, line for Week 6')}
+      ${item('Ranking the best deals of NBA free agency')}
+      ${item('Lakers sign guard to two-year deal')}
+      ${item('Fantasy football waiver wire pickups')}
+    </channel></rss>`);
+  });
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  t.after(() => server.close());
+  const url = `http://127.0.0.1:${server.address().port}/feed`;
+  const feeds = require('../lib/feeds');
+  const titles = async (cfg) => {
+    feeds.clearCache();
+    const [section] = await feeds.getEdition(config.normalize({ feeds: [{ id: 's', name: 'Sports', url }], ...cfg }));
+    return { titles: section.stories.map((s) => s.title), ads: section.sources[0].ads };
+  };
+  const on = await titles({ exclude: ['waiver wire'] });
+  assert.deepEqual(on.titles.sort(), ['Chiefs vs. Bills odds, picks, line for Week 6', 'Lakers sign guard to two-year deal', 'Ranking the best deals of NBA free agency']);
+  assert.equal(on.ads.length, 5);
+  assert.ok(on.ads.some((a) => a.title === 'Fantasy football waiver wire pickups' && /waiver wire/.test(a.why)), 'exclude phrases');
+  const off = await titles({ filterAds: false });
+  assert.equal(off.titles.length, 8, 'filterAds: false keeps everything');
+});

@@ -62,6 +62,8 @@ Everything in `config.json` can also be changed from **Settings**:
 | `feeds` | | `[{ "id", "name", "url", "enabled", "frontPage" }]`. Feeds with the same `name` are merged into one section, with their stories mixed by date. Set `"frontPage": false` on a feed to keep its stories off the front page; they still appear in their section. Each `id` must be unique. |
 | feed `type`, `label` | `news` | Set `"type": "comic"` on a comic-strip feed. It then contributes only its latest strip, shown as a full-width image even when `showImages` is off. A section made only of comic feeds is laid out as a funny pages, in the order the feeds are listed. `label` is the strip's name, such as `"Peanuts"`. The build measures each strip: wide daily strips get a full row, and squarer panels (single panels, Sunday pages) are paired two to a row at matching heights. |
 | feed `showText` | false | Comic feeds only. `true` prints the feed's text for the strip, such as a caption or alt text, under the image. |
+| `filterAds` | true | Drop advertisements from news feeds: sportsbook promo and bonus codes, shopping "deals" round-ups, coupons, and items labelled sponsored or paid. Betting coverage such as odds and picks is kept. Each build's summary lists what was filtered. |
+| `exclude` | `[]` | More headline phrases to drop, e.g. `["waiver wire", "/^Quiz:/"]`. Plain text matches anywhere, ignoring case; `/…/` is a regular expression. |
 | `maxAgeHours` | *(none)* | Front page only: show just the stories from the last N hours, for example `24`. Section pages still show everything (up to `maxPerFeed`). Undated stories are kept. |
 | `comicMaxHeight` | 55 | Tallest a comic strip may be, as a % of the screen height. Lower it if Sunday strips are too big. |
 
