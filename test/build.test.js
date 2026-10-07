@@ -198,3 +198,30 @@ test('funny pages: compact panels share a row sized to equal heights; wide strip
   assert.match(rows[2], /wide2\.png/);
   assert.match(rows[2], /^ end"/, 'last row has no rule under it');
 });
+
+test('feeds that refuse unknown clients are retried as a browser, with a clear error if that fails', async (t) => {
+  const rss = fs.readFileSync(path.join(__dirname, 'fixtures', 'rss.xml'));
+  const seen = [];
+  const server = http.createServer((req, res) => {
+    const browser = /Mozilla/.test(req.headers['user-agent'] || '');
+    seen.push(`${req.url} ${browser ? 'browser' : 'app'}`);
+    if (req.url === '/picky') { res.writeHead(200, { 'Content-Type': 'text/xml' }); return res.end(browser ? rss : ''); }
+    if (req.url === '/forbidden') { res.writeHead(browser ? 200 : 403); return res.end(browser ? rss : 'no'); }
+    res.writeHead(200, { 'Content-Type': 'text/html' }); res.end('<html><body>Access Denied</body></html>');
+  });
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  t.after(() => server.close());
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const feeds = require('../lib/feeds');
+  feeds.clearCache();
+  const sections = await feeds.getEdition(config.normalize({ feeds: [
+    { id: 'picky', name: 'Picky', url: `${base}/picky` },
+    { id: 'forbidden', name: 'Forbidden', url: `${base}/forbidden` },
+    { id: 'html', name: 'Html', url: `${base}/html` },
+  ] }));
+  const by = Object.fromEntries(sections.map((s) => [s.id, s]));
+  assert.equal(by.picky.stories.length, 3, 'empty reply retried as a browser');
+  assert.equal(by.forbidden.stories.length, 3, '403 retried as a browser');
+  assert.match(by.html.sources[0].error, /Not an RSS or Atom feed.*starting “<html><body>Access Denied/);
+  assert.ok(seen.includes('/picky app') && seen.includes('/picky browser'));
+});
