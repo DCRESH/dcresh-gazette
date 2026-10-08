@@ -1,4 +1,7 @@
 'use strict';
+// The self-hosted server: renders the paper live on each request, with a
+// Settings page for feeds, text-size preferences, OPML import/export and an
+// image proxy. For the static GitHub Pages edition, see build.js.
 const http = require('http');
 const crypto = require('crypto');
 const config = require('./lib/config');

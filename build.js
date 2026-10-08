@@ -11,8 +11,12 @@
 //                     "/<repo>" from GITHUB_REPOSITORY, or "" for <user>.github.io repos.
 //   EDIT_URL          link shown as "Edit feeds" in the footer
 //   EDITION_HOURS     when scheduled editions are printed: "hourly", or local hours like "6 18".
-//                     Shown in the footer; names the edition Morning/Evening.
+//                     Shown in the footer; names the Morning/Afternoon/Evening edition.
 //   TZ                time zone for datelines
+//
+// Besides the pages it writes edition.json (when this edition was printed),
+// which scripts/edition-due.js reads to decide whether a new one is due.
+// Internal links carry an edition stamp (?e=...) so browsers fetch fresh pages.
 
 const fs = require('fs');
 const path = require('path');
