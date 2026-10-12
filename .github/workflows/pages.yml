@@ -9,7 +9,15 @@ on:
     # already printed this hour, e.g. by a push. GitHub sometimes delays or
     # drops scheduled runs, so an hour can occasionally be missed.
     - cron: '7 * * * *'
-  workflow_dispatch:       # "Run workflow" button for an immediate edition
+  # "Run workflow" button for an immediate edition. An outside timer (see the
+  # README) can also call this hourly with {"scheduled": "true"}: GitHub runs
+  # those right away, unlike its own schedule, and they use the same due-check.
+  workflow_dispatch:
+    inputs:
+      scheduled:
+        description: 'Only publish if an edition is due (for automated hourly triggers)'
+        required: false
+        default: 'false'
 
 permissions:
   contents: read
@@ -28,11 +36,11 @@ jobs:
       publish: ${{ steps.check.outputs.publish }}
     steps:
       - uses: actions/checkout@v5
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' || inputs.scheduled == 'true'
       - id: check
         name: Is an edition due?
         run: |
-          if [ "${{ github.event_name }}" = schedule ]; then
+          if [ "${{ github.event_name }}" = schedule ] || [ "${{ inputs.scheduled }}" = true ]; then
             node scripts/edition-due.js >> "$GITHUB_OUTPUT"
           else
             echo "publish=true" >> "$GITHUB_OUTPUT"
