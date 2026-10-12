@@ -25,7 +25,7 @@ To read it on a Kindle, open **Experimental Browser** and go to `http://<compute
 
 ## Hosting free on GitHub Pages
 
-You don't need a server. A GitHub Actions job (`.github/workflows/pages.yml`) builds the whole paper as static HTML and publishes it to GitHub Pages: a new edition every hour, and right away on every push to `main`. GitHub's scheduler often runs late or skips runs, so an hour can occasionally be missed; the workflow wakes once an hour and publishes only when an edition is due (it checks the site's `edition.json`). To print at set times instead, change `EDITION_HOURS` in the workflow to local hours, e.g. `'6 18'` for 6 AM and 6 PM. The address will be `https://<user>.github.io/<repo>/`.
+You don't need a server. A GitHub Actions job (`.github/workflows/pages.yml`) builds the whole paper as static HTML and publishes it to GitHub Pages: two editions a day, at 6 AM and 5 PM in the paper's time zone, and right away on every push to `main`. GitHub's scheduler often runs late or skips runs, so the workflow wakes every 10 minutes in the hours after each edition time (and hourly otherwise) and publishes only when an edition is due (it checks the site's `edition.json`). To change the times, edit `EDITION_HOURS` in the workflow (local hours, or `'hourly'`) and the matching UTC hours in its `cron` lines. The address will be `https://<owner>.github.io/<repo>/`.
 
 To turn it on:
 
@@ -34,9 +34,9 @@ To turn it on:
 3. Go to **Actions → Publish newspaper → Run workflow**, or push any commit, to print the first edition.
 4. Optional: the paper's time zone defaults to `America/New_York`. To change it, go to **Settings → Secrets and variables → Actions → Variables** and add `TZ`, for example `America/Chicago`. It sets the datelines, the edition times and when the issue number goes up.
 
-### Reliable hourly editions with an outside timer
+### More dependable editions with an outside timer
 
-GitHub's own schedule is best-effort and may run only a few of the 24 hourly checks a day. For dependable hourly editions, have a free timer service such as [cron-job.org](https://cron-job.org) trigger the workflow:
+GitHub's own schedule is best-effort and may skip many wake-ups. For dependable timing, have a free timer service such as [cron-job.org](https://cron-job.org) trigger the workflow:
 
 1. **Create a token.** On GitHub, go to **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
    * Under *Repository access*, choose **Only select repositories** and pick this repo.
