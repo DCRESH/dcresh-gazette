@@ -34,6 +34,25 @@ To turn it on:
 3. Go to **Actions → Publish newspaper → Run workflow**, or push any commit, to print the first edition.
 4. Optional: the paper's time zone defaults to `America/New_York`. To change it, go to **Settings → Secrets and variables → Actions → Variables** and add `TZ`, for example `America/Chicago`. It sets the datelines, the edition times and when the issue number goes up.
 
+### Reliable hourly editions with an outside timer
+
+GitHub's own schedule is best-effort and may run only a few of the 24 hourly checks a day. For dependable hourly editions, have a free timer service such as [cron-job.org](https://cron-job.org) trigger the workflow:
+
+1. **Create a token.** On GitHub, go to **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
+   * Under *Repository access*, choose **Only select repositories** and pick this repo.
+   * Under *Repository permissions*, set **Actions** to **Read and write**.
+   * The token can only trigger and read workflow runs for this one repo; it can't change any code. Note its expiry date.
+2. **Create the timer.** In the timer service, create a job that runs every hour (for example at 5 past) and sends:
+   * **URL:** `https://api.github.com/repos/<owner>/<repo>/actions/workflows/pages.yml/dispatches`
+   * **Method:** `POST`
+   * **Headers:** `Authorization: Bearer <your token>`, `Accept: application/vnd.github+json` and `Content-Type: application/json`
+   * **Body:** `{"ref":"main","inputs":{"scheduled":"true"}}`
+
+   A successful call returns HTTP 204.
+3. **Check it works.** In the Actions tab, a `workflow_dispatch` run should appear every hour. With `"scheduled":"true"`, a run publishes only when an edition is due, so GitHub's own schedule and the timer never print the same hour twice.
+
+When the token expires, generate a new one and paste it into the timer's header.
+
 Some things work differently in the static edition:
 
 * **Changing feeds:** there's no Settings page. Edit `config.json` on GitHub; saving it publishes a new edition within a couple of minutes. To show an *Edit feeds* link in the footer, remove the `EDIT_URL: ''` line from the workflow.
