@@ -46,7 +46,8 @@ function annotate(level, message, { title, file, line, col } = {}) {
   if (!process.env.GITHUB_ACTIONS) return;
   const props = Object.entries({ title, file, line, col }).filter(([, v]) => v !== undefined)
     .map(([k, v]) => `${k}=${String(v).replace(/[,:\r\n%]/g, ' ')}`).join(',');
-  console.log(`::${level}${props ? ` ${props}` : ''}::${String(message).replace(/\r?\n/g, ' ')}`);
+  // GitHub decodes %0A as a line break; keep only 10 notices/warnings per step in mind.
+  console.log(`::${level}${props ? ` ${props}` : ''}::${String(message).replace(/%/g, '%25').replace(/\r?\n/g, '%0A')}`);
 }
 
 function writeSummary(markdown) {
@@ -97,6 +98,7 @@ async function build() {
   const sections = await feeds.getEdition(cfg);
   const now = Date.now();
   const summary = ['| Feed | Result |', '| --- | --- |'];
+  const loaded = []; // one combined notice: GitHub keeps only 10 notices per step
   for (const section of sections) {
     for (const s of section.sources) {
       const label = s.feed.label || (section.sources.length > 1 ? `${section.name} (${s.feed.url})` : section.name);
@@ -108,9 +110,10 @@ async function build() {
       summary.push(`| ${label} | ${s.error ? `\u274c ${s.error}` : `\u2705 ${result}`} |`);
       if (s.error) annotate('warning', `${label}: ${s.error} (${s.feed.url})`, { title: 'Feed failed' });
       else if (s.feed.type === 'comic' && !(strip && strip.image)) annotate('warning', `${label}: ${result} (${s.feed.url})`, { title: 'Comic has no image' });
-      else annotate('notice', `${label}: ${result}`, { title: 'Feed loaded' });
+      else loaded.push(`${label}: ${result}`);
     }
   }
+  if (loaded.length) annotate('notice', loaded.join('\n'), { title: `Feeds loaded (${loaded.length})` });
   writeSummary(`### Edition feeds\n\n${summary.join('\n')}\n`);
   const total = sections.reduce((n, s) => n + s.stories.length, 0);
   if (total === 0) {
