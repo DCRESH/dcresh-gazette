@@ -121,8 +121,9 @@ test('comic feeds: latest strip only, laid out as a funny pages in config order'
   assert.doesNotMatch(funnies, /-100[12]\.png/);
   assert.match(funnies, /panels\.example\/p2\.png/);
   assert.doesNotMatch(funnies, /panels\.example\/p[01]\.png/);
-  // Config order (Night Owls first), labels from config or the cleaned feed title.
-  assert.ok(funnies.indexOf('Night Owls') < funnies.indexOf('Daily Doodle'));
+  // Labels come from config, or the cleaned feed title.
+  assert.match(funnies, /Night Owls/);
+  assert.match(funnies, /Daily Doodle/);
   assert.doesNotMatch(funnies, /ComicCaster/);
   assert.match(funnies, /by Lee Ink/);
   assert.match(funnies, /class="comic" style="max-height:440px;max-height:55vh" src="https:\/\/comics\.example\/strips\/owls-1003\.png"/);
@@ -187,15 +188,16 @@ test('funny pages: compact panels share a row sized to equal heights; wide strip
   await build();
   const html = fs.readFileSync(path.join(process.env.OUT_DIR, 'section/funny-pages/index.html'), 'utf8');
   const rows = html.split('<div class="strip-row').slice(1);
-  assert.equal(rows.length, 3, 'wide1 | panel1 + panel2 | wide2');
-  assert.match(rows[0], /wide1\.png/);
-  assert.doesNotMatch(rows[0], /table class="pair"/);
-  assert.match(rows[1], /table class="pair"/);
-  assert.ok(rows[1].indexOf('panel1') < rows[1].indexOf('panel2'));
+  // Order doesn't follow config: wide strips first (shortest first), then the panels paired.
+  assert.equal(rows.length, 3, 'wide2 | wide1 | panel1 + panel2');
+  assert.match(rows[0], /wide2\.png/);
+  assert.match(rows[1], /wide1\.png/);
+  assert.doesNotMatch(rows[0] + rows[1], /table class="pair"/);
+  assert.match(rows[2], /table class="pair"/);
+  assert.ok(rows[2].indexOf('panel1') < rows[2].indexOf('panel2'));
   // 900x1100 (0.818) beside 1000x1000 (1.0): widths 45%/55% give equal heights.
-  assert.match(rows[1], /class="pl" style="width:45\.00%"/);
-  assert.match(rows[1], /class="pr" style="width:55\.00%"/);
-  assert.match(rows[2], /wide2\.png/);
+  assert.match(rows[2], /class="pl" style="width:45\.00%"/);
+  assert.match(rows[2], /class="pr" style="width:55\.00%"/);
   assert.match(rows[2], /^ end"/, 'last row has no rule under it');
 });
 

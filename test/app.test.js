@@ -196,3 +196,26 @@ test('comic strips keep their calendar date in any time zone, and big images are
   assert.equal(screenSizedImage('https://img.example/a.png'), 'https://img.example/a.png');
   assert.ok(editionNumber);
 });
+
+test('funny pages layout: pairs similar compact panels, odd one alone, pages fill by height', () => {
+  const { comicRows, comicPages } = require('../lib/render');
+  const strip = (id, w, h) => ({ id, imageWidth: w, imageHeight: h });
+  const strips = [
+    strip('sunday', 900, 1200), strip('daily1', 900, 280), strip('farside', 950, 1060),
+    strip('panel', 900, 900), strip('daily2', 900, 300), strip('unknown'), strip('tall', 800, 1300),
+  ];
+  const rows = comicRows(strips).map((r) => r.map((s) => s.id));
+  // Wide (and unknown-size) strips first, each alone; compact panels paired by similar shape.
+  assert.deepEqual(rows.slice(0, 3).map((r) => r.length), [1, 1, 1]);
+  assert.deepEqual(rows.slice(0, 3).flat().sort(), ['daily1', 'daily2', 'unknown']);
+  assert.deepEqual(rows.slice(3), [['tall', 'sunday'], ['farside', 'panel']]);
+  // Every strip appears exactly once.
+  assert.deepEqual(rows.flat().sort(), strips.map((s) => s.id).sort());
+  // An odd count leaves one panel alone, on the last row.
+  assert.deepEqual(comicRows(strips.slice(0, 3)).map((r) => r.map((s) => s.id)), [['daily1'], ['sunday', 'farside']]);
+  assert.equal(comicRows([strip('a', 900, 900), strip('b', 900, 1000), strip('c', 900, 950)]).pop().length, 1);
+  // A typical day's comics (five dailies and a panel) fit on one page; many strips spread over more.
+  const day = [...Array.from({ length: 5 }, (_, i) => strip(`d${i}`, 900, 280)), strip('fs', 950, 1060)];
+  assert.equal(comicPages(day).length, 1);
+  assert.ok(comicPages(Array.from({ length: 20 }, (_, i) => strip(`x${i}`, 900, 290))).length >= 3);
+});
