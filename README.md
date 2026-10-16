@@ -1,10 +1,10 @@
 # The Gazette
 
-A self-hosted RSS reader that lays your feeds out as a classic broadsheet newspaper, with a masthead, a lead story, columns and section pages. It is built for the Kindle web browser.
+A self-hosted RSS reader that lays your feeds out as a classic broadsheet newspaper, with a masthead, a lead story, columns and section pages. It is built for e-reader web browsers and other simple, slow browsers.
 
 * **No dependencies.** It needs Node.js 18 or newer and nothing else.
-* **No JavaScript in the pages.** The server fetches and parses every feed and sends the Kindle plain HTML.
-* **Configurable.** Add, rename, reorder, disable and remove feeds from the Settings page on the Kindle itself, or edit `config.json` directly.
+* **No JavaScript in the pages.** The server fetches and parses every feed and sends the browser plain HTML.
+* **Configurable.** Add, rename, reorder, disable and remove feeds from the Settings page in any browser, or edit `config.json` directly.
 
 ## Running it
 
@@ -14,7 +14,7 @@ PORT=3000 npm start       # another port
 ADMIN_PASSWORD=secret npm start   # put a password on /settings
 ```
 
-To read it on a Kindle, open **Experimental Browser** and go to `http://<computer-ip>:8080/`. Use the computer's LAN address, not `localhost`, and bookmark the page. Serving plain `http://` on your home network avoids the TLS problems older Kindles have with modern certificates. If you host it publicly, put it behind HTTPS and set `ADMIN_PASSWORD`.
+To read it on an e-reader or tablet, open its web browser and go to `http://<computer-ip>:8080/`. Use the computer's LAN address, not `localhost`, and bookmark the page. Serving plain `http://` on your home network avoids the TLS problems older e-readers have with modern certificates. If you host it publicly, put it behind HTTPS and set `ADMIN_PASSWORD`.
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
@@ -58,7 +58,7 @@ Some things work differently in the static edition:
 * **Changing feeds:** there's no Settings page. Edit `config.json` on GitHub; saving it publishes a new edition within a couple of minutes. To show an *Edit feeds* link in the footer, remove the `EDIT_URL: ''` line from the workflow.
 * **Bylines** show the time each story was published, not "3 hrs ago", because a static page can't keep relative times current.
 * **Editions:** the masthead names the Morning, Afternoon or Evening edition, and the footer says when it was printed and when the next one comes.
-* **No text-size buttons or Refresh link.** Use the Kindle browser's own zoom. The footer's *Latest edition* link fetches the newest front page.
+* **No text-size buttons or Refresh link.** Use the browser's own zoom. The footer's *Latest edition* link fetches the newest front page.
 * **Browser caching:** GitHub Pages lets browsers keep a page for up to 10 minutes. Every link inside the paper carries the edition's stamp (`?e=…`), so links from a new edition always load fresh pages. Only a bookmarked front page can be up to 10 minutes old.
 * **Pictures**, if enabled, load directly from the news sites.
 * **Failed builds:** nothing is published, and the previous edition stays up, if every feed fails or `config.json` has a typo. A typo stops the build with an error pointing at the line. A single failed feed is just left out of that edition. Each run's page in the Actions tab lists every feed's result: stories loaded, how many name an author, any ads filtered, and each comic strip's size.
@@ -72,9 +72,9 @@ Edit `config.json` (on GitHub for the hosted edition). When self-hosting, the Se
 
 | Key | Default | |
 | --- | --- | --- |
-| `title`, `motto` | The Kindle Gazette | Masthead text |
+| `title`, `motto` | The Gazette | Masthead text |
 | `founded` | *(none)* | Founding date, `YYYY-MM-DD`. The masthead shows Vol. I, No. 1 on that day. The number goes up daily and each anniversary starts a new volume. Leave it out to hide the line. |
-| `columns` | 2 | Front-page columns, 1–4. Use 2 for a 6–7″ Kindle in portrait and 3 for a Scribe or landscape. |
+| `columns` | 2 | Front-page columns, 1–4. Use 2 for a 6–7″ e-reader in portrait and 3 for larger screens or landscape. |
 | `storiesPerPage` | 10 | Stories per newspaper page |
 | `summaryLength` | 280 | Summary characters per brief (the lead gets twice as many) |
 | `refreshMinutes` | 20 | How long feeds are cached |
@@ -90,7 +90,7 @@ Edit `config.json` (on GitHub for the hosted edition). When self-hosting, the Se
 
 When you add a feed you can paste a website's address instead of the feed's. The server finds the feed through the site's `<link rel="alternate">` tag. You can also import feeds by pasting OPML or a list of URLs, and export them from `/opml`.
 
-## How it handles the Kindle's limitations
+## How it handles e-reader browsers' limitations
 
 | Limitation | What the app does |
 | --- | --- |
@@ -99,9 +99,9 @@ When you add a feed you can paste a website's address instead of the feed's. The
 | E-ink ghosting, slow refresh and painful scrolling | Pages are paginated with large *Previous* / *Next* buttons. Articles are split into screen-sized pages at paragraph breaks, and the split depends on the text size. There are no animations, transitions or hover effects. |
 | Low contrast between greys | Everything is pure black on white. Secondary text uses italics and small caps instead of grey. |
 | Small memory and slow network | Each page is a single request of about 10–20 KB with inline CSS and no web fonts. Pictures are off by default. |
-| Old TLS stack | When self-hosting with pictures on, they go through `/img` on your server, so the Kindle only connects to one host. Only images that appear in the current feeds are proxied, so it is not an open proxy. |
+| Old TLS stack | When self-hosting with pictures on, they go through `/img` on your server, so the reading device only connects to one host. Only images that appear in the current feeds are proxied, so it is not an open proxy. |
 | Imprecise touch | Buttons and links have large tap targets, and form controls are 16px or bigger. |
-| Text size | When self-hosting, four sizes (A A A A in the footer) are remembered in a cookie. The static edition relies on the Kindle's own zoom. |
+| Text size | When self-hosting, four sizes (A A A A in the footer) are remembered in a cookie. The static edition relies on the browser's own zoom. |
 | Messy feed HTML | Content is reduced to a safe subset. Scripts, iframes, styles, event handlers, tracking pixels and share buttons are removed. |
 
 Supported formats are RSS 2.0, RSS 1.0 (RDF) and Atom, including `content:encoded`, `media:*` thumbnails, enclosures and non-UTF-8 encodings. Some big sites turn away unknown apps, so a feed that is refused or comes back empty is retried once with ordinary browser headers. If it still fails, the error says what came back. When self-hosting, a feed that fails to update keeps its last good copy on the page with a notice.

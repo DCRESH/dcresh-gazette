@@ -167,15 +167,15 @@ async function handleSettingsPost(req, res) {
 }
 
 // ---- image proxy ---------------------------------------------------------
-// Pictures are fetched by the server so the Kindle only talks to one host
-// (old Kindle browsers fail TLS handshakes with many modern CDNs).
+// Pictures are fetched by the server so the reading device only talks to one
+// host (old e-reader browsers fail TLS handshakes with many modern CDNs).
 
 async function proxyImage(res, url) {
   if (!url || !feeds.imageAllowed(url)) return send(res, 404, 'Not found', 'text/plain');
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 10000);
   try {
-    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'KindleGazette/1.0' } });
+    const r = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Gazette/1.0' } });
     const type = r.headers.get('content-type') || '';
     if (!r.ok || !/^image\/(jpeg|png|gif|webp|bmp)/.test(type)) throw new Error('bad image');
     const len = parseInt(r.headers.get('content-length'), 10);
@@ -277,7 +277,7 @@ function start(port = PORT, host = HOST) {
 if (require.main === module) {
   start().then((s) => {
     const { port } = s.address();
-    console.log(`Kindle Gazette is on the press at http://localhost:${port}/`);
+    console.log(`The Gazette is on the press at http://localhost:${port}/`);
     console.log(`Config: ${config.CONFIG_PATH}${ADMIN_PASSWORD ? ' (settings are password-protected)' : ''}`);
   });
 }
