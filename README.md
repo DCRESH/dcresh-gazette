@@ -129,3 +129,12 @@ The code is split into a few files:
 * `lib/render.js`: all HTML and CSS
 * `lib/schedule.js` and `scripts/edition-due.js`: deciding when a scheduled edition is due
 * `.github/workflows/pages.yml`: the hourly publishing job
+
+## License and content
+
+The code is released under the [MIT License](LICENSE). It has no third-party dependencies and embeds no fonts, so there are no other licenses to include. The page's font list names fonts (such as Bookerly or Georgia) only so a device can use one it already has; no font files are included.
+
+The stories, comics and pictures the paper shows are not covered by that license. They belong to their publishers and creators, who keep their copyright. The paper credits every story with its source and author, links each one to the original, and says so in the footer of every page. The published site also asks search engines not to index it (a `noindex` tag on every page and a `robots.txt`).
+
+This is a personal reader. Before sharing the site widely or adding content from other sources, check each publisher's terms of use. Many allow headlines, short summaries and links, but not republishing full articles or comic strips. Comic strips in particular are licensed by their syndicates, such as Andrews McMeel / GoComics, for personal viewing.
+

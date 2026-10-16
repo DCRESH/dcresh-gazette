@@ -154,6 +154,9 @@ async function build() {
 
   write(`${B}/404.html`, render.notFound({ config: cfg, size: SIZE, message: 'That story is no longer in this edition.' }));
   fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
+  // Keep the paper out of search engines (pages also carry a noindex tag):
+  // it reprints other publishers' stories and comics for personal reading.
+  fs.writeFileSync(path.join(OUT, 'robots.txt'), 'User-agent: *\nDisallow: /\n');
   // Read by scripts/edition-due.js to decide whether a scheduled edition is due.
   const ed0 = render.editionNumber(cfg.founded, now);
   fs.writeFileSync(path.join(OUT, 'edition.json'), JSON.stringify({ printedAt: new Date(now).toISOString(), ...(ed0 || {}) }) + '\n');

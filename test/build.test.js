@@ -65,6 +65,8 @@ test('static build: every page exists and links stay under the base path', async
   assert.match(front, /href="\/my-paper\/section\/atom\/\?e=/, 'section still linked in the nav');
   assert.match(front, /http-equiv="Cache-Control" content="no-cache/);
   assert.match(front, /Latest edition<\/a>/);
+  assert.match(front, /class="credit">Stories, comics and pictures © their publishers and creators/);
+  assert.equal(fs.readFileSync(path.join(out, 'robots.txt'), 'utf8'), 'User-agent: *\nDisallow: /\n');
 
   // Feeds sharing a name form one section with one nav link.
   const local = fs.readFileSync(path.join(out, 'section/local/index.html'), 'utf8');
