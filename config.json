@@ -34,6 +34,12 @@
     {"id": "far-side", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/farside-daily", "enabled": true, "frontPage": false, "type": "comic", "label": "The Far Side", "showText": true},
     {"id": "doonesbury", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/doonesbury", "enabled": true, "frontPage": false, "type": "comic", "label": "Doonesbury"},
     {"id": "forbetterorforworse", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/forbetterorforworse", "enabled": true, "frontPage": false, "type": "comic", "label": "For Better or For Worse"},
-    {"id": "nonsequitur", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/nonsequitur", "enabled": true, "frontPage": false, "type": "comic", "label": "Non Sequitur"}
+    {"id": "nonsequitur", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/nonsequitur", "enabled": true, "frontPage": false, "type": "comic", "label": "Non Sequitur"},
+    {"id": "zits", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/zits", "enabled": true, "frontPage": false, "type": "comic", "label": "Zits"},
+    {"id": "mutts", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/mutts", "enabled": true, "frontPage": false, "type": "comic", "label": "Mutts"},
+    {"id": "blondie", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/blondie", "enabled": true, "frontPage": false, "type": "comic", "label": "Blondie"},
+    {"id": "family-circus", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/family-circus", "enabled": true, "frontPage": false, "type": "comic", "label": "The Family Circus"},
+    {"id": "dennis-the-menace", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/dennis-the-menace", "enabled": true, "frontPage": false, "type": "comic", "label": "Dennis the Menace"},
+    {"id": "hagar-the-horrible", "name": "Funny Pages", "url": "https://comiccaster.xyz/rss/hagar-the-horrible", "enabled": true, "frontPage": false, "type": "comic", "label": "Hagar the Horrible"}
   ]
 }
