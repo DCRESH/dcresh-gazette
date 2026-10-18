@@ -219,3 +219,11 @@ test('funny pages layout: pairs similar compact panels, odd one alone, pages fil
   assert.equal(comicPages(day).length, 1);
   assert.ok(comicPages(Array.from({ length: 20 }, (_, i) => strip(`x${i}`, 900, 290))).length >= 3);
 });
+
+test('funny pages layout: very tall strips get their own row at a readable width', () => {
+  const { comicRows } = require('../lib/render');
+  const strip = (id, w, h) => ({ id, imageWidth: w, imageHeight: h });
+  const rows = comicRows([strip('nonseq', 396, 1800), strip('doones', 900, 1249), strip('fbofw', 900, 1213), strip('daily', 900, 280)])
+    .map((r) => r.map((s) => s.id));
+  assert.deepEqual(rows, [['daily'], ['doones', 'fbofw'], ['nonseq']]);
+});
