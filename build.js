@@ -110,7 +110,8 @@ async function build() {
       summary.push(`| ${label} | ${s.error ? `\u274c ${s.error}` : `\u2705 ${result}`} |`);
       if (s.error) annotate('warning', `${label}: ${s.error} (${s.feed.url})`, { title: 'Feed failed' });
       else if (s.feed.type === 'comic' && !(strip && strip.image)) annotate('warning', `${label}: ${result} (${s.feed.url})`, { title: 'Comic has no image' });
-      else loaded.push(`${label}: ${result}`);
+      // Image URLs stay in the log; GitHub cuts long notices short.
+      else loaded.push(`${label}: ${result.replace(/: https?:\/\/[^\s)]+\)/, ')')}`);
     }
   }
   if (loaded.length) annotate('notice', loaded.join('\n'), { title: `Feeds loaded (${loaded.length})` });
