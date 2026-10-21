@@ -210,8 +210,8 @@ async function handle(req, res) {
   if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Method not allowed', 'text/plain');
 
   if (path === '/') {
-    const sections = await feeds.getEdition(cfg);
-    return send(res, 200, render.frontPage({ config: cfg, sections, page, size }));
+    const [sections, daily] = await Promise.all([feeds.getEdition(cfg), feeds.getDaily(cfg)]);
+    return send(res, 200, render.frontPage({ config: cfg, sections, page, size, daily }));
   }
 
   let m;

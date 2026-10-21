@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Verse of the Day</title>
+  <link href="https://example.com/votd"/>
+  <entry>
+    <title>Psalm 23:1</title>
+    <link href="https://example.com/passage/psalm-23-1"/>
+    <updated>2026-10-21T00:00:00Z</updated>
+    <content type="html">&lt;p&gt;The Lord is my shepherd; I shall not want.&lt;/p&gt;</content>
+  </entry>
+</feed>

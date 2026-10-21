@@ -96,7 +96,7 @@ async function build() {
   });
 
   const cfg = config.load({ strict: true });
-  const sections = await feeds.getEdition(cfg);
+  const [sections, daily] = await Promise.all([feeds.getEdition(cfg), feeds.getDaily(cfg)]);
   const now = Date.now();
   const summary = ['| Feed | Result |', '| --- | --- |'];
   const loaded = []; // one combined notice: GitHub keeps only 10 notices per step
@@ -114,6 +114,14 @@ async function build() {
       // Image URLs stay in the log; GitHub cuts long notices short.
       else loaded.push(`${label}: ${result.replace(/: https?:\/\/[^\s)]+\)/, ')')}`);
     }
+  }
+  for (const d of daily) {
+    const t = d.item && toText(d.item.content || d.item.summary);
+    const result = d.error || (d.item ? `\u201c${d.item.title}\u201d \u00b7 ${d.item.date ? new Date(d.item.date).toISOString() : 'no date'} \u00b7 text: \u201c${(t || '').slice(0, 160)}\u201d` : 'no items in feed');
+    console.log(`${d.error ? 'FAIL' : ' ok '} ${d.label.padEnd(24)} ${result}`);
+    summary.push(`| ${d.label} | ${d.error ? `\u274c ${d.error}` : `\u2705 ${result}`} |`);
+    if (d.error) annotate('warning', `${d.label}: ${d.error} (${d.feed.url})`, { title: 'Feed failed' });
+    else loaded.push(`${d.label}: ${result}`);
   }
   if (loaded.length) annotate('notice', loaded.join('\n'), { title: `Feeds loaded (${loaded.length})` });
   writeSummary(`### Edition feeds\n\n${summary.join('\n')}\n`);
@@ -139,7 +147,7 @@ async function build() {
 
   const frontPages = pagesFor(render.frontPageStories(sections, cfg, now).length);
   for (let p = 1; p <= frontPages; p++) {
-    write(render.site.home(p), render.frontPage({ config: cfg, sections, page: p, size: SIZE, now }));
+    write(render.site.home(p), render.frontPage({ config: cfg, sections, page: p, size: SIZE, now, daily }));
   }
 
   for (const section of sections) {

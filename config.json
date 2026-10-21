@@ -11,6 +11,8 @@
   "showImages": true,
   "comicMaxHeight": 55,
   "feeds": [
+    {"id": "verse-of-the-day", "name": "Verse of the Day", "url": "https://www.biblegateway.com/votd/get/?format=atom&version=ESV", "enabled": true, "type": "daily", "label": "Verse of the Day"},
+    {"id": "word-of-the-day", "name": "Word of the Day", "url": "https://www.merriam-webster.com/wotd/feed/rss2", "enabled": true, "type": "daily", "label": "Word of the Day"},
     { "id": "gospel-coalition", "name": "Christianity", "url": "https://www.thegospelcoalition.org/feed", "enabled": true },
     { "id": "wkmg-six", "name": "Local News", "url": "https://www.clickorlando.com/arc/outboundfeeds/rss/category/news/?outputType=xml&size=10", "enabled": true },
     { "id": "wesh", "name": "Local News", "url": "https://www.wesh.com/topstories-rss", "enabled": true },

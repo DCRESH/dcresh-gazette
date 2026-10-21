@@ -29,7 +29,9 @@ test('static build: every page exists and links stay under the base path', async
     storiesPerPage: 3,
     feeds: [{ id: 'local', name: 'Local', url: `${base}/rss.xml` }, { id: 'atom', name: 'Atom', url: `${base}/atom.xml`, frontPage: false },
       // Same name as the first feed: merged into the Local section, but kept off the front page.
-      { id: 'local-cafe', name: 'local', url: `${base}/rdf.xml`, frontPage: false }],
+      { id: 'local-cafe', name: 'local', url: `${base}/rdf.xml`, frontPage: false },
+      { id: 'votd', name: 'Verse', url: `${base}/votd.xml`, type: 'daily', label: 'Verse of the Day' },
+      { id: 'wotd', name: 'Word', url: `${base}/wotd.xml`, type: 'daily', label: 'Word of the Day' }],
   });
 
   await build();
@@ -57,6 +59,10 @@ test('static build: every page exists and links stay under the base path', async
   }
 
   const front = fs.readFileSync(path.join(out, 'index.html'), 'utf8');
+  // Daily features sit in a box at the top of the front page, not in a section.
+  assert.match(front, /class="grid dailies"[^]*Verse of the Day[^]*Psalm 23:1[^]*The Lord is my shepherd; I shall not want\.[^]*Word of the Day[^]*gazette[^]*>gazette: a newspaper\.</);
+  assert.doesNotMatch(front, /Word of the Day for October/);
+  assert.ok(!fs.existsSync(path.join(out, 'section/verse')), 'daily feeds get no section page');
   // A feed with frontPage: false keeps its section page but stays off the front page.
   const fronts = files.filter((f) => /^(index\.html|page\/\d+\/index\.html)$/.test(path.relative(out, f)));
   assert.ok(fronts.length >= 1);
