@@ -60,7 +60,7 @@ test('static build: every page exists and links stay under the base path', async
 
   const front = fs.readFileSync(path.join(out, 'index.html'), 'utf8');
   // Daily features sit in a box at the top of the front page, not in a section.
-  assert.match(front, /class="grid dailies"[^]*Verse of the Day[^]*Psalm 23:1[^]*The Lord is my shepherd; I shall not want\.[^]*Word of the Day[^]*gazette[^]*>gazette: a newspaper\.</);
+  assert.match(front, /class="grid dailies"[^]*Verse of the Day[^]*Psalm 23:1[^]*The Lord is my shepherd; I shall not want\.[^]*Word of the Day[^]*>gazette<\/a>[^]*class="daily-note">\\guh-ZET\\ • noun<[^]*>A gazette is a newspaper\.</);
   assert.doesNotMatch(front, /Word of the Day for October/);
   assert.ok(!fs.existsSync(path.join(out, 'section/verse')), 'daily feeds get no section page');
   // A feed with frontPage: false keeps its section page but stays off the front page.
