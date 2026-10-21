@@ -18,7 +18,6 @@
     { "id": "fox35-local", "name": "Local News", "url": "https://www.fox35orlando.com/rss/category/local-news", "enabled": true },
     { "id": "cfpublic-news", "name": "Local News", "url": "https://www.cfpublic.org/news.rss", "enabled": true },
     { "id": "bungalower", "name": "Local News", "url": "https://bungalower.com/feed/", "enabled": true },
-    { "id": "orlando-weekly-a", "name": "Local News", "url": "https://www.orlandoweekly.com/orlando/Rss.xml", "enabled": true },
     { "id": "space-coast-daily", "name": "Local News", "url": "https://spacecoastdaily.com/feed/", "enabled": true },
     { "id": "florida-phoenix", "name": "Florida", "url": "https://floridaphoenix.com/feed/", "enabled": true, "frontPage": false },
     { "id": "florida-politics", "name": "Florida", "url": "https://floridapolitics.com/feed/", "enabled": true, "frontPage": false },
