@@ -20,7 +20,6 @@
     { "id": "bungalower", "name": "Local News", "url": "https://bungalower.com/feed/", "enabled": true },
     { "id": "space-coast-daily", "name": "Local News", "url": "https://spacecoastdaily.com/feed/", "enabled": true },
     { "id": "florida-phoenix", "name": "Florida", "url": "https://floridaphoenix.com/feed/", "enabled": true, "frontPage": false },
-    { "id": "florida-politics", "name": "Florida", "url": "https://floridapolitics.com/feed/", "enabled": true, "frontPage": false },
     { "id": "wusf-news", "name": "Florida", "url": "https://www.wusf.org/news.rss", "enabled": true, "frontPage": false },
     { "id": "cbs-nfl", "name": "Sports", "url": "https://www.cbssports.com/rss/headlines/nfl/", "enabled": true, "frontPage": false },
     { "id": "cbs-nba", "name": "Sports", "url": "https://www.cbssports.com/rss/headlines/nba/", "enabled": true, "frontPage": false },
