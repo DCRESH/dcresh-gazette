@@ -117,7 +117,7 @@ async function build() {
   }
   for (const d of daily) {
     const t = d.item && render.dailyText(d.item, cfg.summaryLength);
-    const result = d.error || (d.item ? `\u201c${d.item.title}\u201d \u00b7 ${d.item.date ? new Date(d.item.date).toISOString() : 'no date'}${t.note ? ` \u00b7 note: \u201c${t.note}\u201d` : ''} \u00b7 text: \u201c${t.text.slice(0, 160)}${t.text.length > 160 ? '\u2026' : ''}\u201d` : 'no items in feed');
+    const result = d.error || (d.item ? `\u201c${d.item.title}\u201d \u00b7 ${d.item.date ? new Date(d.item.date).toISOString() : 'no date'}${t.note ? ` \u00b7 note: \u201c${t.note}\u201d` : ''} \u00b7 text: \u201c${t.text}\u201d` : 'no items in feed');
     console.log(`${d.error ? 'FAIL' : ' ok '} ${d.label.padEnd(24)} ${result}`);
     summary.push(`| ${d.label} | ${d.error ? `\u274c ${d.error}` : `\u2705 ${result}`} |`);
     if (d.error) annotate('warning', `${d.label}: ${d.error} (${d.feed.url})`, { title: 'Feed failed' });
